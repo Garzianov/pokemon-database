@@ -966,7 +966,11 @@ let state={
 };
 
 function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)state.cards=JSON.parse(r);}catch(e){}}
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state.cards));}
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state.cards));
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(pushToSupabase,1500);
+}
 
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1689,6 +1693,31 @@ let syncTimer = null;
 
 // ── AUTH ──
 async function initAuth() {
+  // Supabase v2 gestisce automaticamente il token dall'URL (hash o query string)
+  // onAuthStateChange cattura SIGNED_IN anche al primo caricamento post-magic-link
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      currentUser = session.user;
+      await pullFromSupabase();
+      renderAll();
+      updateAuthUI();
+      if (event === 'SIGNED_IN') {
+        showToast('Accesso effettuato ✓');
+        closeModal('modal-auth');
+      }
+      // Pulisci URL
+      if (window.location.hash || window.location.search.includes('code=')) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      renderAll();
+      updateAuthUI();
+      showToast('Disconnesso');
+    }
+  });
+
+  // Controlla sessione esistente
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
     currentUser = session.user;
@@ -1696,20 +1725,6 @@ async function initAuth() {
   }
   renderAll();
   updateAuthUI();
-
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN') {
-      currentUser = session.user;
-      await pullFromSupabase();
-      renderAll();
-      updateAuthUI();
-      showToast('Accesso effettuato ✓');
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null;
-      updateAuthUI();
-      showToast('Disconnesso');
-    }
-  });
 }
 
 function updateAuthUI() {
@@ -1786,13 +1801,7 @@ async function pullFromSupabase() {
   } catch(e) { console.error('Pull error', e); }
 }
 
-// Override save() to also sync
-const _origSave = save;
-function save() {
-  _origSave();
-  clearTimeout(syncTimer);
-  syncTimer = setTimeout(pushToSupabase, 1500); // debounce 1.5s
-}
+// save() already includes sync — see function definition above
 
 // ── PWA MANIFEST (inline) ──
 function injectManifest() {

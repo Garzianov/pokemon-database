@@ -265,6 +265,40 @@
   .mobile-auth.logged { color: var(--green); border-color: var(--green); }
 }
 .mobile-auth { display: none; }
+
+.trend-arrow{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;}
+.trend-arrow.up svg{fill:#5a9b6a;}
+.trend-arrow.down svg{fill:#b85a4a;}
+.trend-arrow.flat svg{fill:#444250;}
+
+.mkt-cell{white-space:nowrap;position:relative;}
+.mkt-update-btn{
+  width:18px;height:18px;font-size:12px;padding:0;
+  border:1px solid var(--line2);background:transparent;
+  color:var(--dim);border-radius:2px;margin-left:5px;
+  vertical-align:middle;cursor:pointer;transition:all .15s;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'CreatoDisplay',monospace;line-height:1;
+}
+.mkt-update-btn:hover{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,151,58,.08);}
+
+.search-source-bar{display:flex;gap:4px;margin-bottom:8px;}
+.src-btn{
+  padding:5px 12px;font-size:10px;letter-spacing:.5px;
+  background:var(--bg3);border:1px solid var(--line2);color:var(--muted);
+  cursor:pointer;border-radius:2px;transition:all .15s;
+  font-family:'CreatoDisplay','JetBrains Mono',monospace;
+  text-transform:uppercase;
+}
+.src-btn:hover{color:var(--text);border-color:var(--line2);}
+.src-btn.active{color:var(--gold2);border-color:var(--gold-dim);background:var(--bg4);}
+.sr-source-badge{
+  font-size:9px;letter-spacing:1px;padding:1px 5px;border-radius:2px;
+  font-family:'CreatoDisplay',monospace;margin-left:6px;vertical-align:middle;
+}
+.badge-en{background:rgba(74,122,184,.2);color:#4a7ab8;}
+.badge-it{background:rgba(90,155,106,.2);color:#5a9b6a;}
+.badge-jp{background:rgba(201,151,58,.2);color:#c9973a;}
 </style>
 <style>
 :root {
@@ -311,13 +345,13 @@ select option{background:var(--bg3);}
 .table-wrap{border:1px solid var(--line);overflow:hidden;}
 table{width:100%;border-collapse:collapse;background:var(--bg2);}
 th{text-align:left;padding:11px 14px;font-size:9px;font-family:'CreatoDisplay','JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line);background:var(--bg3);font-weight:500;}
-td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:middle;}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}tr:hover td{background:var(--bg3);}
 .num{text-align:right;font-variant-numeric:tabular-nums;}
 .card-thumb{width:40px;height:56px;object-fit:cover;border:1px solid var(--line2);cursor:pointer;border-radius:2px;transition:transform .15s,border-color .15s;display:block;}
 .card-thumb:hover{transform:scale(1.1);border-color:var(--gold);}
 .thumb-empty{width:40px;height:56px;border:1px dashed var(--line2);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:16px;border-radius:2px;}
-.card-name-cell{font-family:'CreatoDisplay','JetBrains Mono',monospace;font-size:15px;}
+.card-name-cell{font-family:'CreatoDisplay','JetBrains Mono',monospace;font-size:13px;line-height:1.3;}
 .card-meta{font-size:10px;font-family:'CreatoDisplay','JetBrains Mono',monospace;color:var(--muted);margin-top:2px;}
 
 
@@ -333,7 +367,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:var(--bg3);}
 }
 .spark-popup-box{
   background:var(--bg2);border:1px solid var(--line2);padding:20px 22px;
-  min-width:360px;animation:sparkIn .2s ease;
+  min-width:380px;max-width:460px;animation:sparkIn .2s ease;
 }
 @keyframes sparkIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
 .spark-popup-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
@@ -342,7 +376,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:var(--bg3);}
 .spark-popup-val{font-family:'CreatoDisplay','JetBrains Mono',monospace;font-size:22px;color:var(--gold2);}
 .spark-cell{cursor:pointer;transition:background .15s;}
 .spark-cell:hover{background:var(--bg3)!important;}
-.pl-bar-wrap{width:130px;}
+.pl-bar-wrap{width:100%;}
 /* Nuova barra P&L a larghezza fissa */
 .pl-bar-fixed{width:100%;height:8px;border-radius:3px;overflow:hidden;margin-top:5px;position:relative;display:flex;}
 /* GUADAGNO: sfondo scuro (acquisto) + segmento verde (profitto) */
@@ -352,7 +386,29 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:var(--bg3);}
 .pl-seg-lost{background:rgba(184,90,74,0.25);height:100%;flex-shrink:0;}
 .pl-seg-current{background:var(--red);height:100%;flex-shrink:0;}
 .pl-val{font-size:11px;font-family:'CreatoDisplay','JetBrains Mono',monospace;font-variant-numeric:tabular-nums;}.pl-val.pos{color:var(--green);}.pl-val.neg{color:var(--red);}
-.actions-cell{white-space:nowrap;}.actions-cell button{padding:5px 9px;font-size:10px;margin-right:3px;}
+.actions-cell{white-space:nowrap;display:flex;gap:3px;align-items:center;}
+.actions-cell button{
+  padding:0;
+  width:28px;height:28px;
+  font-size:13px;
+  margin:0;
+  min-width:unset;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--line2);
+  background:var(--bg3);
+  border-radius:2px;
+  color:var(--muted);
+  transition:all .15s;
+  cursor:pointer;
+}
+.actions-cell button:hover{border-color:var(--gold-dim);color:var(--text);background:var(--bg4);}
+.actions-cell button.ghost{background:var(--bg3);border-color:var(--line2);}
+.actions-cell button.ghost:hover{border-color:var(--line2);color:var(--muted);}
+.actions-cell button.danger:hover{border-color:var(--red);color:var(--red);background:rgba(184,90,74,.1);}
+.actions-cell button.sell-btn{color:var(--gold);border-color:var(--gold-dim);}
+.actions-cell button.sell-btn:hover{border-color:var(--gold);background:rgba(201,151,58,.1);}
 .empty-state{padding:80px 20px;text-align:center;color:var(--muted);}
 .empty-icon{font-size:40px;margin-bottom:16px;opacity:.3;}
 .empty-state p{font-family:'CreatoDisplay','JetBrains Mono',monospace;font-size:16px;margin-bottom:8px;}
@@ -672,6 +728,40 @@ canvas{display:block;width:100%;}
   .mobile-auth.logged { color: var(--green); border-color: var(--green); }
 }
 .mobile-auth { display: none; }
+
+.trend-arrow{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;}
+.trend-arrow.up svg{fill:#5a9b6a;}
+.trend-arrow.down svg{fill:#b85a4a;}
+.trend-arrow.flat svg{fill:#444250;}
+
+.mkt-cell{white-space:nowrap;position:relative;}
+.mkt-update-btn{
+  width:18px;height:18px;font-size:12px;padding:0;
+  border:1px solid var(--line2);background:transparent;
+  color:var(--dim);border-radius:2px;margin-left:5px;
+  vertical-align:middle;cursor:pointer;transition:all .15s;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'CreatoDisplay',monospace;line-height:1;
+}
+.mkt-update-btn:hover{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,151,58,.08);}
+
+.search-source-bar{display:flex;gap:4px;margin-bottom:8px;}
+.src-btn{
+  padding:5px 12px;font-size:10px;letter-spacing:.5px;
+  background:var(--bg3);border:1px solid var(--line2);color:var(--muted);
+  cursor:pointer;border-radius:2px;transition:all .15s;
+  font-family:'CreatoDisplay','JetBrains Mono',monospace;
+  text-transform:uppercase;
+}
+.src-btn:hover{color:var(--text);border-color:var(--line2);}
+.src-btn.active{color:var(--gold2);border-color:var(--gold-dim);background:var(--bg4);}
+.sr-source-badge{
+  font-size:9px;letter-spacing:1px;padding:1px 5px;border-radius:2px;
+  font-family:'CreatoDisplay',monospace;margin-left:6px;vertical-align:middle;
+}
+.badge-en{background:rgba(74,122,184,.2);color:#4a7ab8;}
+.badge-it{background:rgba(90,155,106,.2);color:#5a9b6a;}
+.badge-jp{background:rgba(201,151,58,.2);color:#c9973a;}
 </style>
 </head>
 <body>
@@ -682,6 +772,7 @@ canvas{display:block;width:100%;}
     <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard"><span>◈</span> Dashboard</div>
     <div class="nav-item" onclick="showPage('owned')" id="nav-owned"><span>◉</span> Posseduti</div>
     <div class="nav-item" onclick="showPage('watched')" id="nav-watched"><span>◎</span> Osservati</div>
+    <div class="nav-item" onclick="showPage('sold')" id="nav-sold"><span>✦</span> Venduti</div>
   </nav>
   <div class="auth-bar">
   <div class="sb-label">Account</div>
@@ -746,15 +837,21 @@ canvas{display:block;width:100%;}
     <div class="page-header">
       <div class="page-title">Carte <span>possedute</span></div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <input type="text" id="filter-owned" placeholder="Filtra nome..." style="width:160px;" oninput="renderTable('owned')">
+        <input type="text" id="filter-owned" placeholder="Nome, set, codice..." style="width:180px;" oninput="renderTable('owned')">
         <div class="sort-bar" id="sort-bar-owned"></div>
         <button class="primary" onclick="openAddModal('owned')">+ Aggiungi</button>
       </div>
     </div>
     <div class="table-wrap">
       <table><thead><tr>
-        <th style="width:54px;"></th><th>Carta</th><th>Set · Cond.</th>
-        <th class="num">Acquisto</th><th class="num">Mercato</th><th>P&amp;L</th><th style="width:110px;">Trend</th><th>Azioni</th>
+        <th style="width:48px;"></th>
+        <th style="width:22%;">Carta</th>
+        <th style="width:16%;">Set · Cond.</th>
+        <th class="num" style="width:9%;">Acquisto</th>
+        <th class="num" style="width:9%;">Mercato</th>
+        <th style="width:14%;">P&amp;L</th>
+        <th style="width:18%;">Trend</th>
+        <th style="width:12%;">Azioni</th>
       </tr></thead><tbody id="tbody-owned"></tbody></table>
     </div>
   </div>
@@ -764,71 +861,232 @@ canvas{display:block;width:100%;}
     <div class="page-header">
       <div class="page-title">Lista <span>osservati</span></div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <input type="text" id="filter-watched" placeholder="Filtra nome..." style="width:160px;" oninput="renderTable('watched')">
+        <input type="text" id="filter-watched" placeholder="Nome, set, codice..." style="width:180px;" oninput="renderTable('watched')">
         <div class="sort-bar" id="sort-bar-watched"></div>
         <button class="primary" onclick="openAddModal('watched')">+ Aggiungi</button>
       </div>
     </div>
     <div class="table-wrap">
       <table><thead><tr>
-        <th style="width:54px;"></th><th>Carta</th><th>Set · Cond.</th>
-        <th class="num">Prezzo rif.</th><th class="num">Valore attuale</th><th>Variazione</th><th style="width:110px;">Trend</th><th>Azioni</th>
+        <th style="width:48px;"></th>
+        <th style="width:22%;">Carta</th>
+        <th style="width:16%;">Set · Cond.</th>
+        <th class="num" style="width:9%;">Prezzo rif.</th>
+        <th class="num" style="width:9%;">Valore att.</th>
+        <th style="width:14%;">Variazione</th>
+        <th style="width:18%;">Trend</th>
+        <th style="width:12%;">Azioni</th>
       </tr></thead><tbody id="tbody-watched"></tbody></table>
     </div>
   </div>
+
+
+  <!-- VENDUTI -->
+  <div class="page" id="page-sold">
+    <div class="page-header">
+      <div class="page-title">Carte <span>vendute</span></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <input type="text" id="filter-sold" placeholder="Nome, set, codice..." style="width:180px;" oninput="renderSold()">
+        <div class="sort-bar" id="sort-bar-sold"></div>
+      </div>
+    </div>
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="stat-label">Ricavo totale</div>
+        <div class="stat-val" id="sold-revenue">— €</div>
+        <div class="stat-sub" id="sold-count">0 carte vendute</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Costo acquisto</div>
+        <div class="stat-val" id="sold-cost">— €</div>
+        <div class="stat-sub">Totale speso</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Profitto netto</div>
+        <div class="stat-val" id="sold-profit">— €</div>
+        <div class="stat-sub" id="sold-profit-pct">— %</div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th style="width:48px;"></th>
+        <th style="width:28%;">Carta</th>
+        <th style="width:18%;">Set · Cond.</th>
+        <th class="num" style="width:12%;">Acquisto</th>
+        <th class="num" style="width:12%;">Venduto a</th>
+        <th style="width:16%;">Profitto</th>
+        <th style="width:10%;">Data</th>
+        <th style="width:6%;">Azioni</th>
+      </tr></thead><tbody id="tbody-sold"></tbody></table>
+    </div>
+  </div>
+
+
+<!-- BOTTOM NAV (mobile) -->
+<nav style="display:none;" id="bottom-nav-el">
+  <button class="bn-item active" id="bn-dashboard" onclick="showPage('dashboard')">
+    <span class="bn-icon">◈</span><span>Dashboard</span>
+  </button>
+  <button class="bn-item" id="bn-owned" onclick="showPage('owned')">
+    <span class="bn-icon">◉</span><span>Posseduti</span>
+  </button>
+  <button class="bn-item" id="bn-watched" onclick="showPage('watched')">
+    <span class="bn-icon">◎</span><span>Osservati</span>
+  </button>
+  <button class="bn-item" id="bn-sold" onclick="showPage('sold')">
+    <span class="bn-icon">✦</span><span>Venduti</span>
+  </button>
+  <button class="bn-item" id="bn-auth" onclick="currentUser?sb.auth.signOut():openAuthModal()">
+    <span class="bn-icon" id="bn-auth-icon">⊙</span>
+    <span id="bn-auth-label">Accedi</span>
+  </button>
+</nav>
+<style>
+@media(max-width:768px){
+  #bottom-nav-el{
+    display:flex!important;
+    position:fixed;bottom:0;left:0;right:0;
+    background:var(--bg2);border-top:1px solid var(--line);
+    z-index:50;padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+}
+
+.trend-arrow{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;}
+.trend-arrow.up svg{fill:#5a9b6a;}
+.trend-arrow.down svg{fill:#b85a4a;}
+.trend-arrow.flat svg{fill:#444250;}
+
+.mkt-cell{white-space:nowrap;position:relative;}
+.mkt-update-btn{
+  width:18px;height:18px;font-size:12px;padding:0;
+  border:1px solid var(--line2);background:transparent;
+  color:var(--dim);border-radius:2px;margin-left:5px;
+  vertical-align:middle;cursor:pointer;transition:all .15s;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'CreatoDisplay',monospace;line-height:1;
+}
+.mkt-update-btn:hover{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,151,58,.08);}
+
+.search-source-bar{display:flex;gap:4px;margin-bottom:8px;}
+.src-btn{
+  padding:5px 12px;font-size:10px;letter-spacing:.5px;
+  background:var(--bg3);border:1px solid var(--line2);color:var(--muted);
+  cursor:pointer;border-radius:2px;transition:all .15s;
+  font-family:'CreatoDisplay','JetBrains Mono',monospace;
+  text-transform:uppercase;
+}
+.src-btn:hover{color:var(--text);border-color:var(--line2);}
+.src-btn.active{color:var(--gold2);border-color:var(--gold-dim);background:var(--bg4);}
+.sr-source-badge{
+  font-size:9px;letter-spacing:1px;padding:1px 5px;border-radius:2px;
+  font-family:'CreatoDisplay',monospace;margin-left:6px;vertical-align:middle;
+}
+.badge-en{background:rgba(74,122,184,.2);color:#4a7ab8;}
+.badge-it{background:rgba(90,155,106,.2);color:#5a9b6a;}
+.badge-jp{background:rgba(201,151,58,.2);color:#c9973a;}
+</style>
+
 
 </main>
 </div>
 
 <!-- MODAL: AGGIUNGI -->
 <div class="modal-bg" id="modal-add">
-  <div class="modal">
+  <div class="modal" style="max-width:620px;">
     <h2 id="modal-add-title">Aggiungi carta</h2>
+
+    <!-- Sezione: Identificazione carta -->
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);">Identificazione</div>
     <div class="field">
-      <label>Cerca carta per nome</label>
-      <div class="search-box">
-        <input type="text" id="search-input" placeholder="Nome carta, oppure: MEW 202, SV3 45...">
-        <div class="search-results" id="search-results"></div>
+      <label>Nome carta *</label>
+      <input type="text" id="f-name-it" placeholder="es. Charizard ex (OBF 125), Mewtwo (MEW 202/165)..." style="width:100%;">
+    </div>
+
+    <!-- Sezione: Dettagli -->
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);">Dettagli</div>
+    <div class="field-row3">
+      <div class="field"><label>Lingua</label>
+        <select id="f-lang">
+          <option value="EN">EN — Inglese</option>
+          <option value="IT">IT — Italiano</option>
+          <option value="JP">JP — Giapponese</option>
+          <option value="DE">DE — Tedesco</option>
+          <option value="FR">FR — Francese</option>
+          <option value="ES">ES — Spagnolo</option>
+          <option value="KR">KR — Coreano</option>
+          <option value="CN">CN — Cinese Semplificato</option>
+          <option value="TW">TW — Cinese Tradizionale</option>
+          <option value="PT">PT — Portoghese</option>
+        </select>
+      </div>
+      <div class="field"><label>Condizione</label>
+        <select id="f-cond">
+          <option value="MI">MI — Mint</option>
+          <option value="NM" selected>NM — Near Mint</option>
+          <option value="EX">EX — Excellent</option>
+          <option value="GD">GD — Good</option>
+          <option value="LP">LP — Light Played</option>
+          <option value="PL">PL — Played</option>
+          <option value="PO">PO — Poor</option>
+        </select>
+      </div>
+      <div class="field"><label>Categoria</label>
+        <select id="f-cat">
+          <option value="owned">Posseduto</option>
+          <option value="watched">Osservato</option>
+        </select>
       </div>
     </div>
-    <div id="selected-wrap" style="display:none;">
-      <div class="field">
-        <label>Carta selezionata</label>
-        <div class="selected-preview" id="selected-preview"></div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Nome italiano (modifica se vuoi)</label>
-          <input type="text" id="f-name-it" placeholder="Nome in italiano...">
-        </div>
-        <div class="field">
-          <label>Nome set italiano (opzionale)</label>
-          <input type="text" id="f-set-it" placeholder="es. Fiamme Fantasma...">
-        </div>
-      </div>
-      <div class="field-row3">
-        <div class="field"><label>Lingua</label>
-          <select id="f-lang"><option>IT</option><option>EN</option><option>DE</option><option>FR</option><option>ES</option><option>JP</option></select>
-        </div>
-        <div class="field"><label>Condizione</label>
-          <select id="f-cond"><option>NM</option><option>EX</option><option>GD</option><option>LP</option><option>PL</option><option>PO</option></select>
-        </div>
-        <div class="field"><label>Categoria</label>
-          <select id="f-cat"><option value="owned">Posseduto</option><option value="watched">Osservato</option></select>
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Prezzo acquisto (€)</label><input type="number" step="0.01" min="0" id="f-buy" placeholder="0,00"></div>
-        <div class="field"><label>Valore attuale mercato (€)</label><input type="number" step="0.01" min="0" id="f-market" placeholder="0,00"></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Data acquisto</label><input type="date" id="f-date"></div>
-        <div class="field"><label>Note</label><input type="text" id="f-notes" placeholder="opzionale..."></div>
+
+    <!-- Varianti: checkbox -->
+    <div class="field" style="margin-top:4px;">
+      <label>Varianti</label>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:6px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;">
+          <input type="checkbox" id="f-holo" style="width:14px;height:14px;accent-color:var(--gold);"> Holo
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;">
+          <input type="checkbox" id="f-reverse" style="width:14px;height:14px;accent-color:var(--gold);"> Reverse Holo
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;">
+          <input type="checkbox" id="f-first-ed" style="width:14px;height:14px;accent-color:var(--gold);"> Prima Edizione
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;">
+          <input type="checkbox" id="f-promo" style="width:14px;height:14px;accent-color:var(--gold);"> Promo
+        </label>
       </div>
     </div>
+
+    <!-- Sezione: Prezzi -->
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);">Prezzi</div>
+    <div class="field-row">
+      <div class="field"><label>Prezzo acquisto (€)</label><input type="number" step="0.01" min="0" id="f-buy" placeholder="0,00"></div>
+      <div class="field"><label>Valore attuale mercato (€)</label><input type="number" step="0.01" min="0" id="f-market" placeholder="0,00"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Data acquisto</label><input type="date" id="f-date"></div>
+      <div class="field"><label>Note</label><input type="text" id="f-notes" placeholder="grading, provenienza, ecc..."></div>
+    </div>
+    <div class="field">
+      <label>Link immagine (da Google Immagini o altro)</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="f-image-url" placeholder="Incolla il link dell'immagine..." style="flex:1;">
+        <button type="button" onclick="previewImageUrl()" style="white-space:nowrap;padding:9px 14px;">Anteprima</button>
+      </div>
+      <div id="f-image-preview" style="margin-top:8px;display:none;">
+        <img id="f-image-preview-img" src="" alt="" style="height:80px;border:1px solid var(--line2);border-radius:2px;object-fit:contain;background:var(--bg3);" onerror="document.getElementById('f-image-preview').style.display='none';showToast('Immagine non caricabile — prova un altro link',true)">
+      </div>
+    </div>
+
+    <!-- Hidden fields per compatibilità -->
+    <input type="hidden" id="search-input">
+    <div id="search-results" style="display:none;"></div>
+    <div id="selected-wrap" style="display:none;"></div>
+    <div id="selected-preview" style="display:none;"></div>
+
     <div class="modal-actions">
       <button onclick="closeModal('modal-add')">Annulla</button>
-      <button class="primary" id="btn-save" onclick="saveCard()" disabled>Salva carta</button>
+      <button class="primary" id="btn-save" onclick="saveCard()">Salva carta</button>
     </div>
   </div>
 </div>
@@ -884,9 +1142,18 @@ canvas{display:block;width:100%;}
 <div class="modal-bg" id="modal-edit">
   <div class="modal" style="max-width:480px;">
     <h2>Modifica carta</h2>
-    <div class="field-row">
-      <div class="field"><label>Nome visualizzato</label><input type="text" id="e-name" placeholder="Nome carta..."></div>
-      <div class="field"><label>Set</label><input type="text" id="e-set" placeholder="Nome set..."></div>
+    <div class="field">
+      <label>Nome carta</label>
+      <input type="text" id="e-name" placeholder="es. Charizard ex (OBF 125)..." style="width:100%;">
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label>Varianti</label>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;"><input type="checkbox" id="e-holo" style="accent-color:var(--gold);"> Holo</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;"><input type="checkbox" id="e-reverse" style="accent-color:var(--gold);"> Reverse Holo</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;"><input type="checkbox" id="e-first-ed" style="accent-color:var(--gold);"> Prima Edizione</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;"><input type="checkbox" id="e-promo" style="accent-color:var(--gold);"> Promo</label>
+      </div>
     </div>
     <div class="field-row">
       <div class="field"><label>Prezzo acquisto (€)</label><input type="number" step="0.01" min="0" id="e-buy" placeholder="0,00"></div>
@@ -904,12 +1171,23 @@ canvas{display:block;width:100%;}
       </div>
     </div>
     <div class="field"><label>Note</label><input type="text" id="e-notes" placeholder="opzionale..."></div>
+    <div class="field">
+      <label>Link immagine</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="e-image-url" placeholder="Incolla link immagine..." style="flex:1;">
+        <button type="button" onclick="previewEditImage()" style="white-space:nowrap;padding:9px 14px;">Anteprima</button>
+      </div>
+      <div id="e-image-preview" style="margin-top:8px;display:none;">
+        <img id="e-image-preview-img" src="" alt="" style="height:80px;border:1px solid var(--line2);border-radius:2px;object-fit:contain;background:var(--bg3);" onerror="document.getElementById('e-image-preview').style.display='none';">
+      </div>
+    </div>
     <div class="modal-actions">
       <button onclick="closeModal('modal-edit')">Annulla</button>
       <button class="primary" onclick="saveEdit()">Salva modifiche</button>
     </div>
   </div>
 </div>
+
 
 <!-- FULLSCREEN IMG -->
 <div class="img-fs" id="img-fs" onclick="closeFS()">
@@ -926,7 +1204,9 @@ canvas{display:block;width:100%;}
       </div>
       <div class="spark-popup-val" id="spark-popup-val">—</div>
     </div>
-    <div id="spark-popup-svg" style="line-height:0;"></div>
+    <div id="spark-popup-svg" style="line-height:0;margin-bottom:16px;"></div>
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Storico valutazioni</div>
+    <div class="history-list" id="spark-popup-history" style="max-height:180px;"></div>
   </div>
 </div>
 
@@ -952,6 +1232,21 @@ canvas{display:block;width:100%;}
     </div>
   </div>
 </div>
+<!-- MODAL: VENDUTO -->
+<div class="modal-bg" id="modal-sell">
+  <div class="modal" style="max-width:360px;">
+    <h2>Segna come venduto</h2>
+    <div id="sell-card-info" style="background:var(--bg);border:1px solid var(--line2);padding:10px 14px;margin-bottom:16px;font-family:'CreatoDisplay',monospace;"></div>
+    <div class="field"><label>Prezzo di vendita (€)</label><input type="number" step="0.01" min="0" id="sell-price" placeholder="0,00" style="width:100%;"></div>
+    <div class="field"><label>Data vendita</label><input type="date" id="sell-date" style="width:100%;"></div>
+    <div class="field"><label>Note (opzionale)</label><input type="text" id="sell-notes" placeholder="es. venduto su Vinted..." style="width:100%;"></div>
+    <div class="modal-actions">
+      <button onclick="closeModal('modal-sell')">Annulla</button>
+      <button class="primary" onclick="confirmSell()" style="background:var(--gold);">✦ Conferma vendita</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -962,7 +1257,7 @@ let state={
   cards:[],
   currentDetailId:null,
   selectedApiCard:null,
-  sort:{ owned:{key:'addedAt',dir:-1}, watched:{key:'addedAt',dir:-1} }
+  sort:{ owned:{key:'addedAt',dir:-1}, watched:{key:'addedAt',dir:-1}, sold:{key:'soldAt',dir:-1} }
 };
 
 function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)state.cards=JSON.parse(r);}catch(e){}}
@@ -983,6 +1278,7 @@ function showPage(name){
   if(bnEl) bnEl.classList.add('active');
   if(name==='owned')renderTable('owned');
   if(name==='watched')renderTable('watched');
+  if(name==='sold'){renderSold();}
   if(name==='dashboard')renderDashboard();
 }
 
@@ -990,8 +1286,8 @@ function eur(v){if(v==null||isNaN(v))return'—';return v.toFixed(2).replace('.'
 function pct(v){if(v==null||isNaN(v))return'';return(v>=0?'+':'')+v.toFixed(1)+'%';}
 function fmtDate(iso){if(!iso)return'—';return new Date(iso).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
 function currentMarket(c){if(!c.history?.length)return null;return c.history[c.history.length-1].value;}
-function totalMarket(c){const m=currentMarket(c);return m!=null?m*(c.qty||1):null;}
-function totalBuyPrice(c){return (c.buyPrice||0)*(c.qty||1);}
+function totalMarket(c){return currentMarket(c);}
+function totalBuyPrice(c){return c.buyPrice||0;}
 
 // ── SEARCH ──
 let searchTimer;
@@ -999,9 +1295,214 @@ document.getElementById('search-input').addEventListener('input',e=>{
   clearTimeout(searchTimer);
   const q=e.target.value.trim();
   const box=document.getElementById('search-results');
-  if(q.length<2){box.style.display='none';return;}
+  if(q.length<2){
+    if(searchSource!=='cm') box.style.display='none';
+    return;
+  }
+  // For CM links, trigger immediately when a cardmarket URL is pasted
+  if(searchSource==='cm' && q.includes('cardmarket.com')){
+    doSearch(q);
+    return;
+  }
   searchTimer=setTimeout(()=>doSearch(q),380);
 });
+
+
+// ── Search source ──
+let searchSource = 'en'; // 'en' | 'it' | 'jp'
+
+function setSource(src){
+  searchSource = src;
+  document.querySelectorAll('.src-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('src-' + src);
+  if(btn) btn.classList.add('active');
+  document.getElementById('search-results').style.display = 'none';
+  
+  if(src === 'cm'){
+    document.getElementById('search-input').placeholder = 'Incolla link Cardmarket — es. cardmarket.com/it/Pokemon/Products/Singles/...';
+    document.getElementById('search-input').value = '';
+    // Show hint
+    const box = document.getElementById('search-results');
+    box.style.display = 'block';
+    box.innerHTML = '<div class="sr-item" style="color:var(--muted);font-size:11px;line-height:1.5;">Incolla il link di una carta da Cardmarket e premi Invio.<br>Es: <span style="color:var(--gold)">cardmarket.com/it/Pokemon/Products/Singles/Journey-Together/Reshiram</span></div>';
+    return;
+  }
+  
+  document.getElementById('search-input').placeholder = 'Nome carta EN, oppure: MEW 202, SV3 45...';
+  const q = document.getElementById('search-input').value.trim();
+  if(q.length >= 2) doSearch(q);
+}
+
+// ── CardTrader API ──
+const CT_TOKEN = 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJjYXJkdHJhZGVyLXByb2R1Y3Rpb24iLCJzdWIiOiJhcHA6MjA5NDUiLCJhdWQiOiJhcHA6MjA5NDUiLCJleHAiOjQ5MzI2NjExNTksImp0aSI6ImM3YjliN2NiLTliZDEtNGQ5My1iMWQ1LWJkYjg2OWRmMjhkMyIsImlhdCI6MTc3Njk4Mzk1OSwibmFtZSI6IkdhcnppYW5vdiBBcHAgMjAyNjA0MjQwMDM5MTkifQ.MICd71EwjXs6OqNWfui1NFRxlOzNnIB4k53DYEgJcs3mB6WMQ2dS8wmSqVHzJVFH1SMXnFy3qs9W0Z5zgz0FtMHQhd5XJPIentV3fEX2ktpUgfpn1zSYZiSANPWtNIJUMfhtwXi5gXMHDvTN6B_m3lTI0vIqX_8hEGrfV_6upm3yjCXHruL8RkzJ7iFo5ZgkrNOtjrzgqi4jtPTUUI-G5H04sGXjEE2pl0o5ChYTHM4EJVhyp2kBzEq9YM66v8or0eft0AnyOVGwLBY_z6rO8NAjcLKnhK0KsQrpCASNOfoV-yaPnbywlT3GVE1o8tMiDMKOVBbIRHkUxI8M1uHzWw';
+const CT_BASE = 'https://api.cardtrader.com/api/v2';
+const CT_HEADERS = {'Authorization': 'Bearer ' + CT_TOKEN};
+const CT_CACHE_KEY = 'ct_pkm_catalog_v2';
+const CT_CACHE_TS_KEY = 'ct_pkm_ts_v2';
+let ctCatalog = null;
+
+async function loadCTCatalog() {
+  if (ctCatalog) return ctCatalog;
+  const ts = localStorage.getItem(CT_CACHE_TS_KEY);
+  const cached = localStorage.getItem(CT_CACHE_KEY);
+  if (cached && ts && (Date.now() - parseInt(ts)) < 86400000) {
+    try { ctCatalog = JSON.parse(cached); return ctCatalog; } catch(e) {}
+  }
+  // Get pokemon game id
+  const gRes = await fetch(CT_BASE + '/games', {headers: CT_HEADERS});
+  if (!gRes.ok) throw new Error('CardTrader auth: ' + gRes.status);
+  const gRaw = await gRes.json();
+  const gamesList = Array.isArray(gRaw) ? gRaw : (gRaw.array || gRaw.games || gRaw.data || []);
+  const pkm = Array.isArray(gamesList) ? gamesList.find(g => g.name && g.name.toLowerCase().includes('pokemon')) : null;
+  if (!pkm) throw new Error('Risposta /games: ' + JSON.stringify(gRaw).slice(0, 150));
+  // Download full blueprints catalog
+  const bRes = await fetch(CT_BASE + '/blueprints/export?game_id=' + pkm.id, {headers: CT_HEADERS});
+  if (!bRes.ok) throw new Error('CardTrader blueprints error: ' + bRes.status);
+  const data = await bRes.json();
+  ctCatalog = Array.isArray(data) ? data : (data.array || data.blueprints || data.items || []);
+  try {
+    localStorage.setItem(CT_CACHE_KEY, JSON.stringify(ctCatalog));
+    localStorage.setItem(CT_CACHE_TS_KEY, Date.now().toString());
+  } catch(e) { console.warn('CT cache error:', e); }
+  return ctCatalog;
+}
+
+async function searchCT(query) {
+  const catalog = await loadCTCatalog();
+  const q = query.toLowerCase().trim();
+  return catalog.filter(b => b.name && b.name.toLowerCase().includes(q)).slice(0, 20);
+}
+
+function normalizeCTCard(bp) {
+  const img = bp.image_url || bp.image || '';
+  return {
+    _source: 'cardtrader',
+    id: 'ct_' + bp.id,
+    _ctId: bp.id,
+    name: bp.name || '—',
+    set: { name: bp.expansion?.name || '', id: bp.expansion?.code || '' },
+    number: bp.collector_number || bp.number || '',
+    rarity: bp.rarity || '',
+    images: { small: img, large: img },
+  };
+}
+
+async function doSearchCT(q, box) {
+  if (!ctCatalog) {
+    box.innerHTML = '<div class="sr-item"><span class="spin"></span> Caricamento catalogo CardTrader...</div>';
+    await loadCTCatalog();
+  }
+  const results = await searchCT(q);
+  if (!results.length) {
+    box.innerHTML = '<div class="sr-item" style="color:var(--muted)">Nessun risultato nel catalogo CardTrader</div>';
+    return;
+  }
+  box.innerHTML = results.map(bp => {
+    const c = normalizeCTCard(bp);
+    return `<div class="sr-item" onclick="selectCard('ct_${bp.id}','ct')">
+      ${c.images.small ? `<img class="sr-img" src="${c.images.small}" alt="" onerror="this.style.display='none'">` : '<div class="sr-img-ph">?</div>'}
+      <div>
+        <div class="sr-name">${c.name} <span class="sr-source-badge" style="background:rgba(201,151,58,.2);color:var(--gold2);font-family:CreatoDisplay,monospace;font-size:9px;padding:1px 5px;border-radius:2px;">CT</span></div>
+        <div class="sr-meta">${c.set.name} · #${c.number} · ${c.rarity}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
+// ══════════════════════════════
+//  TCGDex API — ricerca multilingua corretta
+//  Endpoint: https://api.tcgdex.net/v2/{lang}/cards?name=like:{query}
+//  Immagini: https://assets.tcgdex.net/en/{serie}/{set}/{localId}/high.webp
+// ══════════════════════════════
+
+const TCGDEX_API = 'https://api.tcgdex.net/v2';
+const TCGDEX_IMG = 'https://assets.tcgdex.net';
+
+const SEARCH_LANGS = {
+  'it': { flag: '🇮🇹', label: 'IT', name: 'Italiano' },
+  'ja': { flag: '🇯🇵', label: 'JP', name: 'Giapponese' },
+  'de': { flag: '🇩🇪', label: 'DE', name: 'Tedesco' },
+  'fr': { flag: '🇫🇷', label: 'FR', name: 'Francese' },
+  'es': { flag: '🇪🇸', label: 'ES', name: 'Spagnolo' },
+  'pt': { flag: '🇵🇹', label: 'PT', name: 'Portoghese' },
+  'ko': { flag: '🇰🇷', label: 'KR', name: 'Coreano' },
+};
+
+// Costruisce l'URL immagine dal campo image di TCGDex
+// Il campo image ritorna: "https://assets.tcgdex.net/en/base/base4/1"
+// Aggiungiamo /high.webp o /low.webp
+function tcgdexImg(imageBase, size = 'high') {
+  if (!imageBase) return '';
+  // Remove trailing slash if present
+  const base = imageBase.replace(/\/$/, '');
+  return base + '/' + size + '.webp';
+}
+
+async function searchTCGDex(query, lang) {
+  // Usa "like:" per ricerca parziale (es. "like:mewtwo" trova "Mewtwo ex", "Mewtwo V", ecc.)
+  const url = `${TCGDEX_API}/${lang}/cards?name=like:${encodeURIComponent(query)}&pagination[page]=1&pagination[itemsPerPage]=20`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`TCGDex ${res.status} per lingua: ${lang}`);
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
+async function fetchTCGDexCard(cardId, lang) {
+  const url = `${TCGDEX_API}/${lang}/cards/${cardId}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`TCGDex card ${res.status} (${cardId})`);
+  return await res.json();
+}
+
+function normalizeTCGDexCard(raw, lang) {
+  if (!raw || typeof raw !== 'object') return null;
+  const info = SEARCH_LANGS[lang] || { label: lang.toUpperCase(), flag: '' };
+  const imgSmall = tcgdexImg(raw.image, 'low');
+  const imgLarge = tcgdexImg(raw.image, 'high');
+  return {
+    _source: 'tcgdex',
+    _lang: lang,
+    id: raw.id || '',
+    name: raw.name || '—',
+    set: {
+      name: (raw.set && raw.set.name) || (raw.set && raw.set.id) || '',
+      id: ((raw.set && raw.set.id) || '').toUpperCase(),
+    },
+    number: raw.localId || '',
+    rarity: raw.rarity || '',
+    images: { small: imgSmall, large: imgLarge },
+    _badge: info.label,
+  };
+}
+
+async function doSearchTCGDex(q, lang, box) {
+  const info = SEARCH_LANGS[lang] || { flag: '', label: lang.toUpperCase() };
+  const results = await searchTCGDex(q, lang);
+
+  if (!results.length) {
+    box.innerHTML = `<div class="sr-item" style="color:var(--muted)">Nessuna carta trovata in ${info.flag} ${info.label} per "${q}"</div>`;
+    return;
+  }
+
+  box.innerHTML = results.map(r => {
+    const imgUrl = tcgdexImg(r.image, 'low');
+    const cardId = r.id || '';
+    const lastH = cardId.lastIndexOf('-');
+    const setId = lastH > -1 ? cardId.slice(0, lastH).toUpperCase() : '';
+    return `<div class="sr-item" onclick="selectCard('${cardId}','${lang}')">
+      ${imgUrl
+        ? `<img class="sr-img" src="${imgUrl}" alt="" onerror="this.style.display='none'">`
+        : '<div class="sr-img-ph">?</div>'}
+      <div>
+        <div class="sr-name">${r.name || cardId}
+          <span class="sr-source-badge" style="background:rgba(90,155,106,.2);color:#5a9b6a;font-size:9px;padding:1px 5px;border-radius:2px;font-family:CreatoDisplay,monospace;">${info.flag} ${info.label}</span>
+        </div>
+        <div class="sr-meta">${setId} · #${r.localId || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 // ── Smart query parser ──
 // Riconosce pattern tipo "MEW 202", "SV3 45", "sv3pt5 180" → cerca per set+numero
@@ -1051,59 +1552,116 @@ async function doSearch(q){
   box.style.display='block';
   box.innerHTML='<div class="sr-item"><span class="spin"></span> Ricerca...</div>';
   try{
-    const parsed = parseQuery(q);
-    const url = await buildApiUrl(parsed);
-    const res=await fetch(url,{headers:{'X-Api-Key':TCG_KEY}});
-    const data=await res.json();
-    let results=data.data||[];
-
-    // Se set+numero non trova nulla, prova solo col set
-    if(!results.length && parsed.type==='setnum'){
-      const fallback=await fetch(`${TCG_BASE}/cards?q=set.id:"${parsed.setCode.toLowerCase()}" number:${parsed.num}&pageSize=10`,{headers:{'X-Api-Key':TCG_KEY}});
-      const fd=await fallback.json();
-      results=fd.data||[];
+    if(searchSource === 'en'){
+      await doSearchEN(q, box);
+    } else if(searchSource === 'cm'){
+      await doSearchCardmarket(q, box);
+    } else if(SEARCH_LANGS[searchSource]){
+      await doSearchTCGDex(q, searchSource, box);
     }
-
-    if(!results.length){
-      box.innerHTML='<div class="sr-item" style="color:var(--muted)">Nessun risultato — prova con il nome completo</div>';
-      return;
-    }
-
-    const badge = parsed.type!=='name'
-      ? `<div style="padding:6px 12px;font-size:9px;letter-spacing:1px;color:var(--gold);border-bottom:1px solid var(--line);background:var(--bg3);">Set: ${parsed.setCode}${parsed.num?' · #'+parsed.num:''} · ${results.length} risultati</div>`
-      : '';
-
-    box.innerHTML = badge + results.map(r=>`
-      <div class="sr-item" onclick="selectCard('${r.id}')">
-        ${r.images?.small?`<img class="sr-img" src="${r.images.small}" alt="">`:'<div class="sr-img-ph">?</div>'}
-        <div>
-          <div class="sr-name">${r.name}</div>
-          <div class="sr-meta">${r.set?.name||''} · #${r.number} · ${r.rarity||''}</div>
-        </div>
-      </div>`).join('');
   }catch(e){box.innerHTML=`<div class="sr-item" style="color:var(--red)">Errore: ${e.message}</div>`;}
 }
 
-async function selectCard(id){
+async function doSearchEN(q, box){
+  const parsed = parseQuery(q);
+  const url = await buildApiUrl(parsed);
+  const res=await fetch(url,{headers:{'X-Api-Key':TCG_KEY}});
+  const data=await res.json();
+  let results=data.data||[];
+  if(!results.length && parsed.type==='setnum'){
+    const fallback=await fetch(`${TCG_BASE}/cards?q=set.id:"${parsed.setCode.toLowerCase()}" number:${parsed.num}&pageSize=10`,{headers:{'X-Api-Key':TCG_KEY}});
+    const fd=await fallback.json();
+    results=fd.data||[];
+  }
+  if(!results.length){
+    box.innerHTML='<div class="sr-item" style="color:var(--muted)">Nessun risultato — prova con il nome completo</div>';
+    return;
+  }
+  const badge = parsed.type!=='name'
+    ? `<div style="padding:6px 12px;font-size:9px;letter-spacing:1px;color:var(--gold);border-bottom:1px solid var(--line);background:var(--bg3);">Set: ${parsed.setCode}${parsed.num?' · #'+parsed.num:''} · ${results.length} risultati</div>`
+    : '';
+  box.innerHTML = badge + results.map(r=>`
+    <div class="sr-item" onclick="selectCard('${r.id}','en')">
+      ${r.images?.small?`<img class="sr-img" src="${r.images.small}" alt="">`:'<div class="sr-img-ph">?</div>'}
+      <div>
+        <div class="sr-name">${r.name} <span class="sr-source-badge badge-en">EN</span></div>
+        <div class="sr-meta">${r.set?.name||''} · #${r.number} · ${r.rarity||''}</div>
+      </div>
+    </div>`).join('');
+}
+
+
+
+async function doSearchCT(q, box){
+  if(!ctCatalog){
+    box.innerHTML='<div class="sr-item"><span class="spin"></span> Caricamento catalogo...</div>';
+    await loadCTCatalog();
+  }
+  const results = await searchCT(q);
+  if(!results.length){
+    box.innerHTML='<div class="sr-item" style="color:var(--muted)">Nessun risultato nel catalogo CardTrader</div>';
+    return;
+  }
+  box.innerHTML = results.map(bp => {
+    const c = normalizeCTCard(bp);
+    const img = c.images.small;
+    return `<div class="sr-item" onclick="selectCard('ct_${bp.id}','ct')">
+      ${img ? `<img class="sr-img" src="${img}" alt="" onerror="this.style.display='none'">` : '<div class="sr-img-ph">?</div>'}
+      <div>
+        <div class="sr-name">${c.name} <span class="sr-source-badge" style="background:rgba(201,151,58,.2);color:var(--gold);">CT</span></div>
+        <div class="sr-meta">${c.set.name} · #${c.number} · ${c.rarity}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function selectCard(id, source){
+  if(!source) source = searchSource || 'en';
   document.getElementById('search-results').style.display='none';
   document.getElementById('search-input').value='⏳ Caricamento...';
   try{
-    const res=await fetch(`${TCG_BASE}/cards/${id}`,{headers:{'X-Api-Key':TCG_KEY}});
-    const data=await res.json();
-    const c=data.data;
+    let c;
+    if(source === 'en'){
+      const res=await fetch(`${TCG_BASE}/cards/${id}`,{headers:{'X-Api-Key':TCG_KEY}});
+      if(!res.ok) throw new Error('pokemontcg ' + res.status);
+      const data=await res.json();
+      c=data.data;
+      c._source='en';
+    } else if(typeof SEARCH_LANGS !== 'undefined' && SEARCH_LANGS[source]){
+      const raw = await fetchTCGDexCard(id, source);
+      if(!raw) throw new Error('Risposta vuota da TCGDex');
+      c = normalizeTCGDexCard(raw, source);
+      if(!c) throw new Error('Errore normalizzazione carta');
+    }
     state.selectedApiCard=c;
+    const imgSrc=c.images?.large||c.images?.small||'';
+    const badgeMap={en:'badge-en',it:'badge-it',jp:'badge-jp'};
+    const labelMap={en:'EN',it:'IT',jp:'JP'};
     document.getElementById('search-input').value=c.name;
     document.getElementById('selected-preview').innerHTML=`
-      <img class="preview-img" src="${c.images?.large||c.images?.small||''}" alt="${c.name}"
-        onclick="showFS('${(c.images?.large||c.images?.small||'').replace(/'/g,"\\'")}','${c.name.replace(/'/g,"\\'")}')">
+      ${imgSrc
+        ?`<img class="preview-img" src="${imgSrc}" alt="" onerror="this.style.opacity='.2'" onclick="showFS('${imgSrc.replace(/'/g,"\'")}','${(c.name||'').replace(/'/g,"\'")}'">`
+        :'<div style="width:56px;height:78px;background:var(--bg3);border:1px dashed var(--line2);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--dim);">?</div>'
+      }
       <div>
-        <div style="font-family:'CreatoDisplay','JetBrains Mono',monospace;font-size:16px;margin-bottom:4px;">${c.name}</div>
-        <div style="font-size:10px;color:var(--muted);">${c.set?.name||''} · ${c.number}/${c.set?.printedTotal||'?'}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px;">${c.rarity||''}</div>
+        <div style="font-family:'CreatoDisplay',monospace;font-size:16px;margin-bottom:4px;">
+          ${c.name} <span class="sr-source-badge ${badgeMap[source]||'badge-en'}">${labelMap[source]||'EN'}</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted);">${c.set?.name||''} · #${c.number||''} · ${c.rarity||''}</div>
       </div>`;
+    document.getElementById('f-name-it').value=c.name;
+    // Auto-set language based on source
+    // Auto-set language field based on source
+    const langMap = {'ja':'JP','it':'IT','de':'DE','fr':'FR','es':'ES','pt':'PT','ko':'KR','zh-tw':'TW'};
+    if(langMap[source]) document.getElementById('f-lang').value = langMap[source];
     document.getElementById('selected-wrap').style.display='block';
     document.getElementById('btn-save').disabled=false;
-  }catch(e){document.getElementById('search-input').value='';showToast('Errore caricamento carta',true);}
+  }catch(e){
+    document.getElementById('search-input').value='';
+    document.getElementById('search-results').style.display='block';
+    document.getElementById('search-results').innerHTML=`<div class="sr-item" style="color:var(--red);font-size:11px;padding:12px;">${e.message}</div>`;
+    showToast('Errore: '+e.message,true);
+  }
 }
 
 // ── ADD MODAL ──
@@ -1112,47 +1670,68 @@ function openAddModal(cat='owned'){
   document.getElementById('search-input').value='';
   document.getElementById('search-results').style.display='none';
   document.getElementById('selected-wrap').style.display='none';
-  document.getElementById('btn-save').disabled=true;
+  document.getElementById('btn-save').disabled=false;
+  document.getElementById('f-buy').value='';
+  document.getElementById('f-market').value='';
+  document.getElementById('f-name-it').value='';
   document.getElementById('f-buy').value='';
   document.getElementById('f-market').value='';
   document.getElementById('f-notes').value='';
-  document.getElementById('f-name-it').value='';
-  document.getElementById('f-set-it').value='';
+  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('f-image-url').value='';
+  document.getElementById('f-image-preview').style.display='none';
+  document.getElementById('f-holo').checked=false;
+  document.getElementById('f-reverse').checked=false;
+  document.getElementById('f-first-ed').checked=false;
+  document.getElementById('f-promo').checked=false;
+  document.getElementById('f-lang').value='EN';
+  document.getElementById('f-cond').value='NM';
+  document.getElementById('f-cat').value=cat;
   document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
   document.getElementById('f-cat').value=cat;
   document.getElementById('modal-add-title').textContent=cat==='owned'?'Aggiungi carta posseduta':'Aggiungi alla lista osservati';
   document.getElementById('modal-add').classList.add('show');
-  setTimeout(()=>document.getElementById('search-input').focus(),60);
+  setTimeout(()=>document.getElementById('f-name-it').focus(),60);
 }
 
 function saveCard(){
-  const ac=state.selectedApiCard;if(!ac)return;
-  const buyPrice=parseFloat(document.getElementById('f-buy').value)||0;
-  const mktPrice=parseFloat(document.getElementById('f-market').value)||0;
-  const nameIt = document.getElementById('f-name-it').value.trim() || ac.name;
-  const setIt  = document.getElementById('f-set-it').value.trim()  || ac.set?.name||'';
-  const card={
-    id:'c_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
-    apiId:ac.id,
-    qty:1,
-    name:nameIt,
-    nameEN:ac.name,
-    set:setIt,
-    setEN:ac.set?.name||'',
-    setCode:(ac.set?.id||'').toUpperCase(),
-    number:ac.number+(ac.set?.printedTotal?'/'+ac.set.printedTotal:''),
-    rarity:ac.rarity||'',
-    image:ac.images?.small||'',
-    imageLarge:ac.images?.large||ac.images?.small||'',
-    lang:document.getElementById('f-lang').value,
-    condition:document.getElementById('f-cond').value,
-    category:document.getElementById('f-cat').value,
-    buyPrice,notes:document.getElementById('f-notes').value,
-    purchaseDate:document.getElementById('f-date').value,
-    history:mktPrice>0?[{date:new Date().toISOString(),value:mktPrice}]:[],
-    addedAt:new Date().toISOString()
+  const name = document.getElementById('f-name-it').value.trim();
+  if(!name){ showToast('Inserisci il nome della carta', true); return; }
+  const buyPrice = parseFloat(document.getElementById('f-buy').value)||0;
+  const mktPrice = parseFloat(document.getElementById('f-market').value)||0;
+  const setCode = '';
+  const number = '';
+  const setName = '';
+  // Build variants string
+  const variants = [];
+  if(document.getElementById('f-holo').checked) variants.push('Holo');
+  if(document.getElementById('f-reverse').checked) variants.push('Reverse');
+  if(document.getElementById('f-first-ed').checked) variants.push('1st Ed.');
+  if(document.getElementById('f-promo').checked) variants.push('Promo');
+
+  const card = {
+    id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+    name: name,
+    set: setName,
+    setCode: setCode,
+    number: number,
+    rarity: '',
+    image: document.getElementById('f-image-url').value.trim(),
+    imageLarge: document.getElementById('f-image-url').value.trim(),
+    lang: document.getElementById('f-lang').value,
+    condition: document.getElementById('f-cond').value,
+    category: document.getElementById('f-cat').value,
+    buyPrice: buyPrice,
+    notes: document.getElementById('f-notes').value,
+    variants: variants,
+    purchaseDate: document.getElementById('f-date').value,
+    history: mktPrice > 0 ? [{date: new Date().toISOString().slice(0,10)+'T00:00:00.000Z', value: mktPrice}] : [],
+    addedAt: new Date().toISOString()
   };
-  state.cards.push(card);save();closeModal('modal-add');renderAll();
+  state.cards.push(card);
+  save();
+  closeModal('modal-add');
+  renderAll();
   showToast('"'+card.name+'" aggiunta');
 }
 
@@ -1166,7 +1745,8 @@ function openDetail(id){
     :'<div class="detail-img-ph">?</div>';
   document.getElementById('detail-name').textContent=c.name;
   document.getElementById('detail-sub').textContent=`${c.set} · ${c.number}`;
-  document.getElementById('detail-chips').innerHTML=[c.lang,c.condition,c.rarity,c.category==='owned'?'Posseduto':'Osservato',(c.qty||1)>1?'×'+(c.qty||1)+' copie':null].filter(Boolean).map(x=>`<span class="chip">${x}</span>`).join('');
+  const variantChips = (c.variants||[]).map(v=>`<span class="chip" style="color:var(--gold);border-color:var(--gold-dim);">${v}</span>`).join('');
+  document.getElementById('detail-chips').innerHTML=[c.lang,c.condition,c.rarity,c.setCode,c.category==='owned'?'Posseduto':'Osservato'].filter(Boolean).map(x=>`<span class="chip">${x}</span>`).join('')+variantChips;
   const mkt=currentMarket(c);const buy=c.buyPrice;
   const qty=c.qty||1;
   const tMktD=totalMarket(c);const tBuyD=totalBuyPrice(c);
@@ -1209,8 +1789,16 @@ function openDetail(id){
 
 // ── UPDATE MODAL ──
 function openUpdateModal(){
+  const c=state.cards.find(x=>x.id===state.currentDetailId);
   document.getElementById('u-market').value='';
   document.getElementById('u-date').value=new Date().toISOString().slice(0,10);
+  // Set min date to day after last entry to prevent wrong ordering
+  const dateInput=document.getElementById('u-date');
+  if(c&&c.history&&c.history.length){
+    const lastDate=c.history.reduce((max,h)=>h.date>max?h.date:max,'');
+    const lastDay=lastDate.slice(0,10);
+    dateInput.min=lastDay; // can re-use same day but not before
+  }
   document.getElementById('modal-update').classList.add('show');
   setTimeout(()=>document.getElementById('u-market').focus(),60);
 }
@@ -1219,13 +1807,15 @@ function openEditModal(){
   const c=state.cards.find(x=>x.id===state.currentDetailId);
   if(!c)return;
   document.getElementById('e-name').value=c.name||'';
-  document.getElementById('e-set').value=c.set||'';
   document.getElementById('e-buy').value=c.buyPrice||'';
   document.getElementById('e-purchase-date').value=c.purchaseDate||'';
   document.getElementById('e-lang').value=c.lang||'IT';
   document.getElementById('e-cond').value=c.condition||'NM';
   document.getElementById('e-cat').value=c.category||'owned';
   document.getElementById('e-notes').value=c.notes||'';
+  document.getElementById('e-image-url').value = c.image || '';
+  document.getElementById('e-image-preview').style.display = c.image ? 'block' : 'none';
+  if(c.image) document.getElementById('e-image-preview-img').src = c.image;
   document.getElementById('modal-edit').classList.add('show');
   setTimeout(()=>document.getElementById('e-name').focus(),60);
 }
@@ -1239,22 +1829,54 @@ function saveUpdate(){
   const date=document.getElementById('u-date').value;
   if(!val||val<=0){showToast('Inserisci un valore valido',true);return;}
   const c=state.cards.find(x=>x.id===state.currentDetailId);if(!c)return;
+  
+  const dateStr = date?date+'T12:00:00.000Z':new Date().toISOString().slice(0,10)+'T12:00:00.000Z';
+  
+  // Find other cards with same name
+  const sameName = state.cards.filter(x => x.id!==c.id && x.name===c.name);
+  
+  // Update current card
   c.history=c.history||[];
-  c.history.push({date:date?date+'T12:00:00.000Z':new Date().toISOString(),value:val});
+  c.history.push({date:dateStr, value:val});
+  
+  if(sameName.length > 0){
+    // Ask if should update all
+    if(confirm(`Hai altre ${sameName.length} carta/e chiamata "${c.name}".
+Aggiornare il valore per tutte le copie?`)){
+      sameName.forEach(x => {
+        x.history = x.history||[];
+        x.history.push({date:dateStr, value:val});
+      });
+      showToast(`Valore aggiornato per ${sameName.length+1} copie`);
+    } else {
+      showToast('Valore aggiornato — solo questa copia');
+    }
+  } else {
+    showToast('Valore aggiornato');
+  }
+  
   save();renderAll();closeModal('modal-update');
-  openDetail(state.currentDetailId);showToast('Valore aggiornato');
+  if(document.getElementById('modal-detail').classList.contains('show'))
+    openDetail(state.currentDetailId);
 }
 
 function saveEdit(){
   const c=state.cards.find(x=>x.id===state.currentDetailId);if(!c)return;
   const name=document.getElementById('e-name').value.trim();
-  const set=document.getElementById('e-set').value.trim();
   const buy=parseFloat(document.getElementById('e-buy').value);
   const pdate=document.getElementById('e-purchase-date').value;
   if(name) c.name=name;
-  if(set) c.set=set;
+  // Variants
+  const variants=[];
+  if(document.getElementById('e-holo').checked) variants.push('Holo');
+  if(document.getElementById('e-reverse').checked) variants.push('Reverse');
+  if(document.getElementById('e-first-ed').checked) variants.push('1st Ed.');
+  if(document.getElementById('e-promo').checked) variants.push('Promo');
+  c.variants=variants;
   if(buy>0) c.buyPrice=buy;
   if(pdate) c.purchaseDate=pdate;
+  const eImg = document.getElementById('e-image-url').value.trim();
+  if(eImg){ c.image = eImg; c.imageLarge = eImg; }
   c.lang=document.getElementById('e-lang').value;
   c.condition=document.getElementById('e-cond').value;
   c.category=document.getElementById('e-cat').value;
@@ -1270,34 +1892,38 @@ function quickUpdate(id){state.currentDetailId=id;openUpdateModal();}
 
 // ── Inline SVG sparkline con asse cartesiano + linea prezzo acquisto ──
 function buildSparkPoints(history, buyPrice, w, h){
-  const pad={t:4,r:4,b:4,l:4};
+  const pad={t:6,r:4,b:14,l:4};
   const cw=w-pad.l-pad.r; const ch=h-pad.t-pad.b;
   const sorted=[...history].sort((a,b)=>new Date(a.date)-new Date(b.date));
   const vals=sorted.map(x=>x.value);
-  // Include buyPrice in range so the reference line is always visible
-  const allVals=buyPrice>0?[...vals,buyPrice]:vals;
-  const minV=Math.min(...allVals)*0.96;
-  const maxV=Math.max(...allVals)*1.04;
-  const range=maxV-minV||1;
+  // Range based ONLY on history values — buyPrice only used for the reference line
+  const minV=Math.min(...vals);
+  const maxV=Math.max(...vals);
+  const margin=(maxV-minV)*0.15||maxV*0.05||1;
+  const rangeMin=minV-margin;
+  const rangeMax=maxV+margin;
+  const range=rangeMax-rangeMin||1;
   const toX=(i)=>pad.l+(vals.length===1?cw/2:i*(cw/(vals.length-1)));
-  const toY=(v)=>pad.t+ch-((v-minV)/range)*ch;
+  const toY=(v)=>pad.t+ch-((v-rangeMin)/range)*ch;
   const pts=vals.map((v,i)=>({x:toX(i),y:toY(v),v}));
   const buyY=buyPrice>0?toY(buyPrice):null;
-  return {pts, buyY, minV, maxV, pad, cw, ch};
+  return {pts, buyY, rangeMin, rangeMax, pad, cw, ch};
 }
 
-function sparklineSVG(card, w=100, h=36){
+function sparklineSVG(card, w=null, h=40){
   const history=card.history||[];
   const buyPrice=card.buyPrice||0;
 
+  const actualW = w || 200;
   if(!history.length){
-    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-      <line x1="4" y1="${h/2}" x2="${w-4}" y2="${h/2}" stroke="#2a2a30" stroke-width="1" stroke-dasharray="3,2"/>
+    return `<svg width="100%" height="${h}" viewBox="0 0 ${actualW} ${h}" preserveAspectRatio="none">
+      <line x1="4" y1="${h/2}" x2="${actualW-4}" y2="${h/2}" stroke="#2a2a30" stroke-width="1" stroke-dasharray="3,2"/>
     </svg>`;
   }
 
-  const {pts,buyY,pad,cw,ch}=buildSparkPoints(history,buyPrice,w,h);
-  const trend=pts[pts.length-1].v>=pts[0].v;
+  const {pts,buyY,rangeMin,rangeMax,pad,cw,ch}=buildSparkPoints(history,buyPrice,actualW,h);
+  // Trend: last value vs first value in sorted history
+  const trend=pts.length>1?(pts[pts.length-1].v>pts[0].v):true;
   const col=trend?'#5a9b6a':'#b85a4a';
   const colFaint=trend?'rgba(90,155,106,0.12)':'rgba(184,90,74,0.12)';
 
@@ -1313,12 +1939,30 @@ function sparklineSVG(card, w=100, h=36){
     ?`<line x1="${pad.l}" y1="${buyY.toFixed(1)}" x2="${pad.l+cw}" y2="${buyY.toFixed(1)}" stroke="#6b4f1a" stroke-width="1.5" stroke-dasharray="0"/>`
     :'';
 
-  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;">
+  const histSorted=[...history].sort((a,b)=>new Date(a.date)-new Date(b.date)||history.indexOf(a)-history.indexOf(b));
+  // Date labels on x-axis (show max 4, always first and last)
+  const labelStep = Math.max(1, Math.floor(pts.length / 3));
+  const dateLabels = pts.map((p,i) => {
+    const showLabel = i === 0 || i === pts.length-1 || i % labelStep === 0;
+    if (!showLabel) return '';
+    const d = new Date(histSorted[i].date);
+    const label = d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
+    return `<text x="${p.x.toFixed(1)}" y="${(pad.t+ch+11).toFixed(1)}" fill="#444250" font-size="7" font-family="CreatoDisplay,monospace" text-anchor="middle">${label}</text>`;
+  }).join('');
+  // Dots with title tooltip
+  const dotsSVG = pts.map((p,i) => {
+    const d = new Date(histSorted[i].date).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+    const v = histSorted[i].value.toFixed(2).replace('.',',') + ' €';
+    return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.5" fill="${col}" stroke="#111114" stroke-width="1"><title>${d} · ${v}</title></circle>`;
+  }).join('');
+  const adjustedH = h + (pts.length > 1 ? 12 : 0);
+  return `<svg width="100%" height="${adjustedH}" viewBox="0 0 ${actualW} ${adjustedH}" preserveAspectRatio="none" style="display:block;">
     <line x1="${pad.l}" y1="${baseY}" x2="${pad.l+cw}" y2="${baseY}" stroke="#252530" stroke-width="1"/>
     ${buyLine}
     <polygon points="${fillPts}" fill="${colFaint}"/>
     <polyline points="${polyPts}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${last.x.toFixed(1)}" cy="${last.y.toFixed(1)}" r="2.5" fill="${col}" stroke="#111114" stroke-width="1"/>
+    ${dotsSVG}
+    ${dateLabels}
   </svg>`;
 }
 
@@ -1339,12 +1983,13 @@ function showSparkPopup(cardId){
   if(!c)return;
   const history=c.history||[];
   const buyPrice=c.buyPrice||0;
-  if(!history.length){showToast('Nessun dato storico',false);return;}
+  if(!history.length){showToast('Nessun dato storico — aggiungi almeno un aggiornamento valore',false);return;}
 
   // Build large SVG (320x140)
   const W=320,H=140;
-  const {pts,buyY,pad,cw,ch}=buildSparkPoints(history,buyPrice,W,H);
-  const trend=pts[pts.length-1].v>=pts[0].v;
+  const {pts,buyY,rangeMin,rangeMax,pad,cw,ch}=buildSparkPoints(history,buyPrice,W,H);
+  // Trend: last value vs first value in sorted history
+  const trend=pts.length>1?(pts[pts.length-1].v>pts[0].v):true;
   const col=trend?'#5a9b6a':'#b85a4a';
   const colFaint=trend?'rgba(90,155,106,0.15)':'rgba(184,90,74,0.15)';
   const polyPts=pts.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
@@ -1386,10 +2031,35 @@ function showSparkPopup(cardId){
   const mkt=currentMarket(c);
   document.getElementById('spark-popup-val').textContent=mkt!=null?eur(mkt):'—';
   document.getElementById('spark-popup-pts').textContent=history.length+' aggiornamenti';
+
+  // History list
+  const sortedHist=[...history].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('spark-popup-history').innerHTML=sortedHist.map((h,i)=>{
+    const prev=sortedHist[i+1];
+    const delta=prev?h.value-prev.value:null;
+    const cls=delta==null?'':delta>=0?'pos':'neg';
+    const deltaStr=delta==null?'':`<span style="font-size:10px;color:var(--${delta>=0?'green':'red'});margin-left:8px;">${delta>=0?'+':''}${delta.toFixed(2).replace('.',',')} €</span>`;
+    return `<div class="history-item" style="${i===0?'background:var(--bg3);':''}">
+      <span class="history-date">${fmtDate(h.date)}</span>
+      <span class="history-val">${eur(h.value)}${deltaStr}</span>
+    </div>`;
+  }).join('');
+
   popup.classList.add('show');
 }
 function closeSparkPopup(){
   document.getElementById('spark-popup').classList.remove('show');
+}
+
+// ── Trend arrow ──
+function trendArrow(history){
+  if(!history||history.length<2) return '<span class="trend-arrow flat"><svg width="10" height="8" viewBox="0 0 10 4"><rect x="0" y="1.5" width="10" height="1.5" rx="1"/></svg></span>';
+  const sorted=[...history].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const last=sorted[sorted.length-1].value;
+  const prev=sorted[sorted.length-2].value;
+  if(last>prev+0.001) return '<span class="trend-arrow up"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,10 0,10"/></svg></span>';
+  if(last<prev-0.001) return '<span class="trend-arrow down"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,10 10,0 0,0"/></svg></span>';
+  return '<span class="trend-arrow flat"><svg width="10" height="8" viewBox="0 0 10 4"><rect x="0" y="1.5" width="10" height="1.5" rx="1"/></svg></span>';
 }
 // Sort options config
 const SORT_OPTIONS = [
@@ -1401,6 +2071,16 @@ const SORT_OPTIONS = [
   { key:'plPct',    label:'P&L %',    icon:'%'  },
   { key:'date',     label:'Data',     icon:'📅' },
   { key:'set',      label:'Set',      icon:'◫'  },
+];
+
+const SORT_OPTIONS_SOLD = [
+  { key:'soldAt',   label:'Recenti',  icon:'⊕' },
+  { key:'name',     label:'Nome',     icon:'↓A' },
+  { key:'soldPrice',label:'Venduto',  icon:'€'  },
+  { key:'buyPrice', label:'Acquisto', icon:'£'  },
+  { key:'profit',   label:'Profitto', icon:'±'  },
+  { key:'profitPct',label:'Profitto%',icon:'%'  },
+  { key:'soldDate', label:'Data',     icon:'📅' },
 ];
 
 function renderSortBar(cat){
@@ -1452,7 +2132,7 @@ function renderTable(cat){
   renderSortBar(cat);
   const filter=(document.getElementById('filter-'+cat)?.value||'').toLowerCase();
   const tbody=document.getElementById('tbody-'+cat);
-  const filtered=state.cards.filter(c=>c.category===cat&&(!filter||c.name.toLowerCase().includes(filter)||c.set.toLowerCase().includes(filter)||(c.nameEN||'').toLowerCase().includes(filter)||(c.setCode||'').toLowerCase().includes(filter)||(c.setEN||'').toLowerCase().includes(filter)));
+  const filtered=state.cards.filter(c=>c.category===cat&&(!filter||c.name.toLowerCase().includes(filter)||c.set.toLowerCase().includes(filter)||(c.setCode||'').toLowerCase().includes(filter)||(c.number||'').toLowerCase().includes(filter)||(c.nameEN||'').toLowerCase().includes(filter)||(c.setEN||'').toLowerCase().includes(filter)));
   const cards=sortCards(filtered,cat);
   if(!cards.length){
     tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">◈</div><p>Nessuna carta ${cat==='owned'?'posseduta':'osservata'}</p><small>Premi "+ Aggiungi" per iniziare</small></div></td></tr>`;
@@ -1491,59 +2171,50 @@ function renderTable(cat){
     return`<tr>
       <td>${imgCell}</td>
       <td>
-        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
           <div class="card-name-cell" style="cursor:pointer;" onclick="openDetail('${c.id}')">${c.name}</div>
-          ${(c.qty||1)>1?`<span class="qty-badge multi">×${c.qty||1}</span>`:''}
+          ${trendArrow(c.history)}
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:5px;">
-          <div class="card-meta" style="line-height:22px;">${c.number} · ${c.lang}${c.notes?' · '+c.notes:''}</div>
-          <select class="qty-select" title="Quantità copie" onchange="setQty('${c.id}',this.value)">
-            ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${(c.qty||1)==n?'selected':''}>${n}×</option>`).join('')}
-          </select>
-        </div>
+        <div class="card-meta" style="margin-top:4px;">${c.number?c.number+' · ':''}${c.lang}${c.variants&&c.variants.length?' · '+c.variants.join(' '):''}${c.notes?' · '+c.notes:''}</div>
       </td>
       <td>
-        <div style="font-size:11px;">${c.set}</div>
-        <div class="card-meta">${c.setCode?'['+c.setCode+'] ':''} ${c.condition} · ${fmtDate(c.purchaseDate)}</div>
+        <div class="card-meta">${c.condition} · ${c.lang} · ${fmtDate(c.purchaseDate)}</div>
       </td>
       <td class="num">${tBuy>0?eur(tBuy):'—'}</td>
-      <td class="num">${tMkt!=null?eur(tMkt):'<span style="color:var(--dim)">—</span>'}</td>
+      <td class="num mkt-cell">
+        <span class="mkt-val">${tMkt!=null?eur(tMkt):'<span style="color:var(--dim)">—</span>'}</span>
+        <button class="mkt-update-btn" onclick="quickUpdate('${c.id}')" title="Aggiorna valore">↻</button>
+      </td>
       <td><div class="pl-bar-wrap">${barHtml}</div></td>
       <td class="spark-cell" id="spark-${c.id}"
         onmouseenter="startSparkHover('${c.id}')"
         onmouseleave="cancelSparkHover()"
-        style="padding:8px 10px;vertical-align:middle;cursor:pointer;">
-        ${sparklineSVG(c)}
+        style="padding:6px 8px;vertical-align:middle;cursor:pointer;">
+        ${sparklineSVG(c,null,40)}
       </td>
       <td class="actions-cell">
-        <button onclick="openDetail('${c.id}')" title="Dettaglio">◈</button>
-        <button onclick="quickUpdate('${c.id}')" title="Aggiorna valore">✎</button>
+        <button onclick="openSellModal('${c.id}')" title="Segna come venduto" class="sell-btn">✦</button>
         <button onclick="quickEdit('${c.id}')" title="Modifica carta">⊞</button>
         <button onclick="duplicateCard('${c.id}')" title="Duplica carta">⧉</button>
         <button class="ghost" onclick="toggleCat('${c.id}')" title="Sposta categoria">⇄</button>
-        <button class="danger ghost" onclick="deleteCard('${c.id}')" title="Elimina carta">×</button>
+        <button class="danger" onclick="deleteCard('${c.id}')" title="Elimina carta">×</button>
       </td></tr>`;
   }).join('');
 }
 
-function setQty(id, val){
-  const c=state.cards.find(x=>x.id===id);if(!c)return;
-  c.qty=Math.max(1,parseInt(val)||1);
-  save();renderAll();
-}
+
 
 function duplicateCard(id){
   const c=state.cards.find(x=>x.id===id);if(!c)return;
   const copy={
     ...JSON.parse(JSON.stringify(c)),
     id:'c_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
-    qty:1,
-    history:[],
     addedAt:new Date().toISOString()
+    // history is preserved from JSON.parse(JSON.stringify(c))
   };
   state.cards.push(copy);
   save();renderAll();
-  showToast('"'+c.name+'" duplicata');
+  showToast('"'+c.name+'" duplicata con storico prezzi');
 }
 
 function deleteCard(id){
@@ -1564,7 +2235,7 @@ function renderDashboard(){
   const owned=state.cards.filter(c=>c.category==='owned');
   const watched=state.cards.filter(c=>c.category==='watched');
   const totalMkt=owned.reduce((s,c)=>s+(totalMarket(c)||0),0);
-  const totalBuy=owned.reduce((s,c)=>s+totalBuyPrice(c),0);
+  const totalBuy=owned.reduce((s,c)=>s+(totalBuyPrice(c)||0),0);
   const pl=totalMkt-totalBuy;
   const plPct=totalBuy>0?(pl/totalBuy)*100:null;
   const watchMkt=watched.reduce((s,c)=>s+(totalMarket(c)||0),0);
@@ -1602,6 +2273,209 @@ function renderTopCards(owned){
       ${pl!=null?`<div style="font-size:10px;color:var(--${pl>=0?'green':'red'});margin-top:2px;">${pl>=0?'+':''}${eur(pl)} · ${pct((pl/totalBuyPrice(c))*100)}</div>`:''}
     </div>`;
   }).join('');
+}
+
+
+// ══════════════════════════════
+//  VENDUTI
+// ══════════════════════════════
+let sellTargetId = null;
+
+function openSellModal(id) {
+  const c = state.cards.find(x => x.id === id);
+  if (!c) return;
+  sellTargetId = id;
+  const mkt = currentMarket(c);
+  document.getElementById('sell-card-info').innerHTML =
+    `<div style="font-size:14px;margin-bottom:4px;">${c.name}</div>
+     <div style="font-size:10px;color:var(--muted);">${c.set} · ${c.condition} · ${c.lang}</div>
+     ${mkt ? `<div style="font-size:11px;color:var(--gold);margin-top:6px;">Valore mercato: ${eur(mkt)}</div>` : ''}
+     ${c.buyPrice ? `<div style="font-size:11px;color:var(--muted);">Acquistato a: ${eur(c.buyPrice)}</div>` : ''}`;
+  document.getElementById('sell-price').value = mkt ? mkt.toFixed(2) : '';
+  document.getElementById('sell-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('sell-notes').value = '';
+  document.getElementById('modal-sell').classList.add('show');
+  setTimeout(() => document.getElementById('sell-price').focus(), 60);
+}
+
+function confirmSell() {
+  const price = parseFloat(document.getElementById('sell-price').value);
+  if (!price || price <= 0) { showToast('Inserisci il prezzo di vendita', true); return; }
+  const c = state.cards.find(x => x.id === sellTargetId);
+  if (!c) return;
+  // Crea record venduto
+  const soldCard = {
+    ...JSON.parse(JSON.stringify(c)),
+    soldPrice: price,
+    soldDate: document.getElementById('sell-date').value || new Date().toISOString().slice(0,10),
+    soldNotes: document.getElementById('sell-notes').value,
+    soldAt: new Date().toISOString(),
+    originalId: c.id,
+  };
+  state.sold = state.sold || [];
+  state.sold.push(soldCard);
+  // Rimuovi dalla lista attiva
+  state.cards = state.cards.filter(x => x.id !== sellTargetId);
+  save();
+  saveSold();
+  renderAll();
+  renderSold();
+  closeModal('modal-sell');
+  const profit = price - (c.buyPrice || 0);
+  showToast(`"${c.name}" venduta · Profitto: ${profit >= 0 ? '+' : ''}${eur(profit)}`);
+}
+
+function saveSold() {
+  localStorage.setItem(STORAGE_KEY + '_sold', JSON.stringify(state.sold || []));
+  // Sync venduti su Supabase
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(pushToSupabase, 1500);
+}
+
+function loadSold() {
+  try {
+    const r = localStorage.getItem(STORAGE_KEY + '_sold');
+    if (r) state.sold = JSON.parse(r);
+    else state.sold = [];
+  } catch(e) { state.sold = []; }
+}
+
+function renderSortBarSold(){
+  const bar = document.getElementById('sort-bar-sold');
+  if(!bar) return;
+  const {key, dir} = state.sort['sold'];
+  bar.innerHTML = SORT_OPTIONS_SOLD.map(o => {
+    const isActive = o.key === key;
+    const arrow = isActive ? (dir === 1 ? ' ↑' : ' ↓') : '';
+    return `<button class="sort-btn${isActive?' active':''}" onclick="setSortSold('${o.key}')">
+      <span>${o.icon}</span>${o.label}${arrow ? `<span class="sort-arrow">${arrow}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+
+function setSortSold(key){
+  const s = state.sort['sold'];
+  if(s.key === key) s.dir *= -1;
+  else { s.key = key; s.dir = key === 'name' ? 1 : -1; }
+  renderSold();
+}
+
+function sortSold(cards){
+  const {key, dir} = state.sort['sold'];
+  return [...cards].sort((a,b) => {
+    let va, vb;
+    switch(key){
+      case 'name':      va=(a.name||'').toLowerCase(); vb=(b.name||'').toLowerCase(); break;
+      case 'soldPrice': va=a.soldPrice||0; vb=b.soldPrice||0; break;
+      case 'buyPrice':  va=a.buyPrice||0; vb=b.buyPrice||0; break;
+      case 'profit':    va=(a.soldPrice||0)-(a.buyPrice||0); vb=(b.soldPrice||0)-(b.buyPrice||0); break;
+      case 'profitPct':
+        va=a.buyPrice>0?((a.soldPrice-a.buyPrice)/a.buyPrice)*100:-Infinity;
+        vb=b.buyPrice>0?((b.soldPrice-b.buyPrice)/b.buyPrice)*100:-Infinity; break;
+      case 'soldDate':  va=a.soldDate||''; vb=b.soldDate||''; break;
+      default:          va=a.soldAt||a.soldDate||''; vb=b.soldAt||b.soldDate||'';
+    }
+    if(va<vb) return -1*dir;
+    if(va>vb) return 1*dir;
+    return 0;
+  });
+}
+
+function renderSold() {
+  renderSortBarSold();
+  const filter = (document.getElementById('filter-sold')?.value || '').toLowerCase();
+  const filtered = (state.sold || []).filter(c =>
+    !filter ||
+    (c.name||'').toLowerCase().includes(filter) ||
+    (c.set||'').toLowerCase().includes(filter) ||
+    (c.setCode||'').toLowerCase().includes(filter) ||
+    (c.number||'').toLowerCase().includes(filter)
+  );
+  const sold = sortSold(filtered);
+
+  // Stats
+  const revenue = sold.reduce((s,c) => s + (c.soldPrice||0), 0);
+  const cost = sold.reduce((s,c) => s + (c.buyPrice||0), 0);
+  const profit = revenue - cost;
+  const profitPct = cost > 0 ? (profit/cost)*100 : null;
+
+  document.getElementById('sold-revenue').textContent = eur(revenue);
+  document.getElementById('sold-count').textContent = sold.length + ' carte vendute';
+  document.getElementById('sold-cost').textContent = eur(cost);
+  const profEl = document.getElementById('sold-profit');
+  profEl.textContent = (profit >= 0 ? '+' : '') + eur(profit);
+  profEl.className = 'stat-val ' + (profit >= 0 ? 'pos' : 'neg');
+  const profPctEl = document.getElementById('sold-profit-pct');
+  profPctEl.textContent = profitPct != null ? (profitPct >= 0 ? '+' : '') + profitPct.toFixed(1) + '%' : '—';
+  profPctEl.className = 'stat-sub ' + (profit >= 0 ? 'pos' : 'neg');
+
+  const tbody = document.getElementById('tbody-sold');
+  if (!sold.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">✦</div><p>Nessuna carta venduta ancora</p><small>Usa il tasto ✦ su una carta per registrare una vendita</small></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = [...sold].reverse().map(c => {
+    const profit = (c.soldPrice||0) - (c.buyPrice||0);
+    const profitPct = c.buyPrice > 0 ? (profit / c.buyPrice)*100 : null;
+    const cls = profit >= 0 ? 'pos' : 'neg';
+    const imgCell = c.image
+      ? `<img class="card-thumb" src="${c.image}" alt="${c.name}" style="cursor:default;">`
+      : `<div class="thumb-empty">?</div>`;
+    return `<tr>
+      <td>${imgCell}</td>
+      <td>
+        <div class="card-name-cell">${c.name}</div>
+        <div class="card-meta">${c.number} · ${c.lang}</div>
+      </td>
+      <td><div style="font-size:11px;">${c.set}</div><div class="card-meta">${c.condition}</div></td>
+      <td class="num">${c.buyPrice > 0 ? eur(c.buyPrice*(c.qty||1)) : '—'}</td>
+      <td class="num" style="color:var(--gold2);">${eur(c.soldPrice*(c.qty||1))}</td>
+      <td>
+        <div class="pl-val ${cls}">${profit >= 0 ? '+' : ''}${eur(profit)} ${profitPct != null ? `<span style="font-size:10px;opacity:.7;">${profitPct>=0?'+':''}${profitPct.toFixed(1)}%</span>` : ''}</div>
+        ${c.buyPrice > 0 && c.soldPrice ? (() => {
+          const buyPct = profit >= 0 ? Math.round((c.buyPrice / c.soldPrice) * 100) : Math.round((c.soldPrice / c.buyPrice) * 100);
+          const gainPct = 100 - buyPct;
+          return profit >= 0
+            ? `<div class="pl-bar-fixed" style="margin-top:4px;"><div class="pl-seg-buy" style="width:${buyPct}%"></div><div class="pl-seg-gain" style="width:${gainPct}%"></div></div>`
+            : `<div class="pl-bar-fixed" style="margin-top:4px;"><div class="pl-seg-current" style="width:${buyPct}%"></div><div class="pl-seg-lost" style="width:${gainPct}%"></div></div>`;
+        })() : ''}
+      </td>
+      <td>
+        <div style="font-size:11px;color:var(--muted);">${c.soldDate||'—'}</div>
+        ${c.soldNotes?`<div style="font-size:9px;color:var(--dim);margin-top:2px;">${c.soldNotes}</div>`:''}
+      </td>
+      <td class="actions-cell">
+        <button class="danger" onclick="deleteSold('${c.id}')" title="Elimina record">×</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteSold(id) {
+  if (!confirm('Eliminare questo record di vendita?')) return;
+  state.sold = (state.sold||[]).filter(x => x.id !== id);
+  saveSold();
+  renderSold();
+  showToast('Record eliminato');
+}
+
+
+function previewEditImage(){
+  const url = document.getElementById('e-image-url').value.trim();
+  if(!url){ showToast('Inserisci un link immagine', true); return; }
+  const img = document.getElementById('e-image-preview-img');
+  img.src = url;
+  document.getElementById('e-image-preview').style.display = 'block';
+}
+
+function previewImageUrl(){
+  const url = document.getElementById('f-image-url').value.trim();
+  if(!url){ showToast('Inserisci un link immagine', true); return; }
+  const preview = document.getElementById('f-image-preview');
+  const img = document.getElementById('f-image-preview-img');
+  img.src = url;
+  preview.style.display = 'block';
 }
 
 function renderAll(){
@@ -1664,10 +2538,10 @@ function drawPortfolioChart(){
 
 // ── MODALS ──
 function closeModal(id){document.getElementById(id).classList.remove('show');}
-['modal-add','modal-detail','modal-update','modal-edit','modal-auth'].forEach(id=>{
+['modal-add','modal-detail','modal-update','modal-edit','modal-auth','modal-sell'].forEach(id=>{
   document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)closeModal(id);});
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('modal-add');closeModal('modal-detail');closeModal('modal-update');closeModal('modal-edit');closeModal('modal-auth');closeFS();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('modal-add');closeModal('modal-detail');closeModal('modal-update');closeModal('modal-edit');closeModal('modal-auth');closeModal('modal-sell');closeFS();}});
 
 function showFS(src,name){document.getElementById('img-fs-src').src=src;document.getElementById('img-fs-name').textContent=name||'';document.getElementById('img-fs').classList.add('show');}
 function closeFS(){document.getElementById('img-fs').classList.remove('show');}
@@ -1785,6 +2659,7 @@ async function pushToSupabase() {
     await sb.from('portfolio').upsert({
       user_id: currentUser.id,
       cards: state.cards,
+      sold: state.sold || [],
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_id' });
   } catch(e) { console.error('Sync error', e); }
@@ -1793,10 +2668,10 @@ async function pushToSupabase() {
 async function pullFromSupabase() {
   if (!currentUser) return;
   try {
-    const { data, error } = await sb.from('portfolio').select('cards').eq('user_id', currentUser.id).single();
-    if (!error && data?.cards) {
-      state.cards = data.cards;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards));
+    const { data, error } = await sb.from('portfolio').select('cards,sold').eq('user_id', currentUser.id).single();
+    if (!error && data) {
+      if (data.cards) { state.cards = data.cards; localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards)); }
+      if (data.sold) { state.sold = data.sold; localStorage.setItem(STORAGE_KEY+'_sold', JSON.stringify(state.sold)); }
     }
   } catch(e) { console.error('Pull error', e); }
 }

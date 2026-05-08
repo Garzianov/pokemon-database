@@ -299,6 +299,69 @@
 .badge-en{background:rgba(74,122,184,.2);color:#4a7ab8;}
 .badge-it{background:rgba(90,155,106,.2);color:#5a9b6a;}
 .badge-jp{background:rgba(201,151,58,.2);color:#c9973a;}
+
+/* ── Timeline vendite ── */
+#sold-timeline{scrollbar-width:thin;}
+#sold-timeline::-webkit-scrollbar{height:4px;}
+#sold-timeline::-webkit-scrollbar-track{background:var(--bg3);}
+#sold-timeline::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px;}
+
+.tl-col {
+  flex-shrink:0;
+  width:80px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+}
+.tl-thumbs {
+  min-height:140px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding-bottom:6px;
+  justify-content:flex-end;
+}
+.tl-thumb {
+  width:64px;
+  background:var(--bg2);
+  border:1px solid var(--line2);
+  border-radius:2px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  transition:border-color .15s;
+}
+.tl-thumb:hover{border-color:var(--gold);}
+.tl-thumb img{width:100%;height:72px;object-fit:cover;display:block;}
+.tl-thumb-ph{width:100%;height:72px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:14px;}
+.tl-thumb-profit{
+  font-size:8px;font-family:'CreatoDisplay',monospace;
+  text-align:center;padding:2px 0;
+  background:var(--bg3);
+}
+.tl-thumb-profit.pos{color:var(--green);}
+.tl-thumb-profit.neg{color:var(--red);}
+.tl-bar-seg{
+  width:2px;
+  height:28px;
+  background:var(--line2);
+  margin:2px 0;
+}
+.tl-bar-active{background:var(--gold);}
+.tl-has-sales .tl-bar-seg{width:3px;}
+.tl-day-num{
+  font-size:11px;font-family:'CreatoDisplay',monospace;
+  color:var(--muted);line-height:1;margin-top:2px;
+}
+.tl-day-name{
+  font-size:8px;letter-spacing:1px;color:var(--dim);
+  text-transform:uppercase;margin-top:2px;
+}
+.tl-today .tl-day-num{color:var(--gold2);}
+.tl-today .tl-bar-seg{background:var(--gold2);}
+.tl-today .tl-day-name{color:var(--gold);}
 </style>
 <style>
 :root {
@@ -762,6 +825,69 @@ canvas{display:block;width:100%;}
 .badge-en{background:rgba(74,122,184,.2);color:#4a7ab8;}
 .badge-it{background:rgba(90,155,106,.2);color:#5a9b6a;}
 .badge-jp{background:rgba(201,151,58,.2);color:#c9973a;}
+
+/* ── Timeline vendite ── */
+#sold-timeline{scrollbar-width:thin;}
+#sold-timeline::-webkit-scrollbar{height:4px;}
+#sold-timeline::-webkit-scrollbar-track{background:var(--bg3);}
+#sold-timeline::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px;}
+
+.tl-col {
+  flex-shrink:0;
+  width:80px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+}
+.tl-thumbs {
+  min-height:140px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding-bottom:6px;
+  justify-content:flex-end;
+}
+.tl-thumb {
+  width:64px;
+  background:var(--bg2);
+  border:1px solid var(--line2);
+  border-radius:2px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  transition:border-color .15s;
+}
+.tl-thumb:hover{border-color:var(--gold);}
+.tl-thumb img{width:100%;height:72px;object-fit:cover;display:block;}
+.tl-thumb-ph{width:100%;height:72px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:14px;}
+.tl-thumb-profit{
+  font-size:8px;font-family:'CreatoDisplay',monospace;
+  text-align:center;padding:2px 0;
+  background:var(--bg3);
+}
+.tl-thumb-profit.pos{color:var(--green);}
+.tl-thumb-profit.neg{color:var(--red);}
+.tl-bar-seg{
+  width:2px;
+  height:28px;
+  background:var(--line2);
+  margin:2px 0;
+}
+.tl-bar-active{background:var(--gold);}
+.tl-has-sales .tl-bar-seg{width:3px;}
+.tl-day-num{
+  font-size:11px;font-family:'CreatoDisplay',monospace;
+  color:var(--muted);line-height:1;margin-top:2px;
+}
+.tl-day-name{
+  font-size:8px;letter-spacing:1px;color:var(--dim);
+  text-transform:uppercase;margin-top:2px;
+}
+.tl-today .tl-day-num{color:var(--gold2);}
+.tl-today .tl-bar-seg{background:var(--gold2);}
+.tl-today .tl-day-name{color:var(--gold);}
 </style>
 </head>
 <body>
@@ -776,8 +902,10 @@ canvas{display:block;width:100%;}
   </nav>
   <div class="auth-bar">
   <div class="sb-label">Account</div>
-  <div id="auth-info" style="font-size:10px;color:var(--muted);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Non connesso</div>
+  <div id="auth-info" style="font-size:10px;color:var(--muted);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Non connesso</div>
+  <div id="sync-status" style="font-size:9px;margin-bottom:6px;height:12px;"></div>
   <button id="auth-btn" onclick="openAuthModal()" style="width:100%;padding:7px;font-size:10px;">Accedi</button>
+  <button id="change-pw-btn" onclick="document.getElementById('modal-set-password').classList.add('show')" style="display:none;width:100%;padding:5px;font-size:9px;margin-top:4px;color:var(--muted);">✎ Cambia password</button>
 </div>
 <div class="sidebar-stats">
     <div class="sb-stat">
@@ -842,6 +970,8 @@ canvas{display:block;width:100%;}
         <button class="primary" onclick="openAddModal('owned')">+ Aggiungi</button>
       </div>
     </div>
+
+
     <div class="table-wrap">
       <table><thead><tr>
         <th style="width:48px;"></th>
@@ -907,6 +1037,8 @@ canvas{display:block;width:100%;}
         <div class="stat-sub" id="sold-profit-pct">— %</div>
       </div>
     </div>
+    
+    
     <div class="table-wrap">
       <table><thead><tr>
         <th style="width:48px;"></th>
@@ -984,6 +1116,69 @@ canvas{display:block;width:100%;}
 .badge-en{background:rgba(74,122,184,.2);color:#4a7ab8;}
 .badge-it{background:rgba(90,155,106,.2);color:#5a9b6a;}
 .badge-jp{background:rgba(201,151,58,.2);color:#c9973a;}
+
+/* ── Timeline vendite ── */
+#sold-timeline{scrollbar-width:thin;}
+#sold-timeline::-webkit-scrollbar{height:4px;}
+#sold-timeline::-webkit-scrollbar-track{background:var(--bg3);}
+#sold-timeline::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px;}
+
+.tl-col {
+  flex-shrink:0;
+  width:80px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+}
+.tl-thumbs {
+  min-height:140px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding-bottom:6px;
+  justify-content:flex-end;
+}
+.tl-thumb {
+  width:64px;
+  background:var(--bg2);
+  border:1px solid var(--line2);
+  border-radius:2px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  transition:border-color .15s;
+}
+.tl-thumb:hover{border-color:var(--gold);}
+.tl-thumb img{width:100%;height:72px;object-fit:cover;display:block;}
+.tl-thumb-ph{width:100%;height:72px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:14px;}
+.tl-thumb-profit{
+  font-size:8px;font-family:'CreatoDisplay',monospace;
+  text-align:center;padding:2px 0;
+  background:var(--bg3);
+}
+.tl-thumb-profit.pos{color:var(--green);}
+.tl-thumb-profit.neg{color:var(--red);}
+.tl-bar-seg{
+  width:2px;
+  height:28px;
+  background:var(--line2);
+  margin:2px 0;
+}
+.tl-bar-active{background:var(--gold);}
+.tl-has-sales .tl-bar-seg{width:3px;}
+.tl-day-num{
+  font-size:11px;font-family:'CreatoDisplay',monospace;
+  color:var(--muted);line-height:1;margin-top:2px;
+}
+.tl-day-name{
+  font-size:8px;letter-spacing:1px;color:var(--dim);
+  text-transform:uppercase;margin-top:2px;
+}
+.tl-today .tl-day-num{color:var(--gold2);}
+.tl-today .tl-bar-seg{background:var(--gold2);}
+.tl-today .tl-day-name{color:var(--gold);}
 </style>
 
 
@@ -1161,7 +1356,18 @@ canvas{display:block;width:100%;}
     </div>
     <div class="field-row3">
       <div class="field"><label>Lingua</label>
-        <select id="e-lang"><option>IT</option><option>EN</option><option>DE</option><option>FR</option><option>ES</option><option>JP</option></select>
+        <select id="e-lang">
+          <option value="EN">EN — Inglese</option>
+          <option value="IT">IT — Italiano</option>
+          <option value="JP">JP — Giapponese</option>
+          <option value="DE">DE — Tedesco</option>
+          <option value="FR">FR — Francese</option>
+          <option value="ES">ES — Spagnolo</option>
+          <option value="KR">KR — Coreano</option>
+          <option value="CN">CN — Cinese Semplificato</option>
+          <option value="TW">TW — Cinese Tradizionale</option>
+          <option value="PT">PT — Portoghese</option>
+        </select>
       </div>
       <div class="field"><label>Condizione</label>
         <select id="e-cond"><option>NM</option><option>EX</option><option>GD</option><option>LP</option><option>PL</option><option>PO</option></select>
@@ -1213,22 +1419,23 @@ canvas{display:block;width:100%;}
 <!-- MODAL: AUTH -->
 <div class="modal-bg" id="modal-auth">
   <div class="modal" style="max-width:360px;">
-    <h2>Accedi</h2>
-    <div id="auth-step1">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Inserisci la tua email — riceverai un link magico per accedere senza password. I tuoi dati saranno sincronizzati su tutti i dispositivi.</p>
-      <div class="field"><label>Email</label><input type="email" id="auth-email" placeholder="tuaemail@esempio.com" style="width:100%;"></div>
-      <div class="modal-actions">
-        <button onclick="closeModal('modal-auth')">Annulla</button>
-        <button class="primary" id="auth-send-btn" onclick="sendMagicLink()">Invia link</button>
-      </div>
+    <h2 id="auth-modal-title">Accedi</h2>
+    
+    <!-- Tab switch -->
+    <div style="display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--line);">
+      <button id="tab-login" onclick="switchAuthTab('login')" style="flex:1;background:none;border:none;border-bottom:2px solid var(--gold2);color:var(--gold2);padding:8px;font-size:11px;letter-spacing:1px;cursor:pointer;">ACCEDI</button>
+      <button id="tab-register" onclick="switchAuthTab('register')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:8px;font-size:11px;letter-spacing:1px;cursor:pointer;">REGISTRATI</button>
     </div>
-    <div id="auth-step2" style="display:none;text-align:center;padding:12px 0;">
-      <div style="font-size:32px;margin-bottom:12px;">📬</div>
-      <div style="font-family:'CreatoDisplay',monospace;font-size:16px;margin-bottom:8px;">Controlla la tua email</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6;">Abbiamo inviato un link di accesso. Aprilo sul dispositivo su cui vuoi usare l'app.</div>
-      <div class="modal-actions" style="justify-content:center;margin-top:20px;">
-        <button onclick="closeModal('modal-auth')">Chiudi</button>
-      </div>
+
+    <div class="field"><label>Email</label><input type="email" id="auth-email" placeholder="tuaemail@esempio.com" style="width:100%;"></div>
+    <div class="field"><label>Password</label><input type="password" id="auth-password" placeholder="••••••••" style="width:100%;"></div>
+    <div id="auth-error" style="color:var(--red);font-size:11px;margin-bottom:8px;display:none;"></div>
+    <div class="modal-actions">
+      <button onclick="closeModal('modal-auth')">Annulla</button>
+      <button class="primary" id="auth-submit-btn" onclick="submitAuth()">Accedi</button>
+    </div>
+    <div style="text-align:center;margin-top:12px;">
+      <button onclick="sendMagicLink()" style="background:none;border:none;color:var(--muted);font-size:10px;cursor:pointer;text-decoration:underline;padding:0;">Usa link magico via email</button>
     </div>
   </div>
 </div>
@@ -1243,6 +1450,21 @@ canvas{display:block;width:100%;}
     <div class="modal-actions">
       <button onclick="closeModal('modal-sell')">Annulla</button>
       <button class="primary" onclick="confirmSell()" style="background:var(--gold);">✦ Conferma vendita</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: IMPOSTA PASSWORD -->
+<div class="modal-bg" id="modal-set-password">
+  <div class="modal" style="max-width:360px;">
+    <h2>Imposta password</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Scegli una password per accedere all'app senza link magici.</p>
+    <div class="field"><label>Nuova password</label><input type="password" id="new-password" placeholder="Minimo 6 caratteri" style="width:100%;"></div>
+    <div class="field"><label>Conferma password</label><input type="password" id="confirm-password" placeholder="Ripeti la password" style="width:100%;"></div>
+    <div id="set-pw-error" style="color:var(--red);font-size:11px;margin-bottom:8px;display:none;"></div>
+    <div class="modal-actions">
+      <button onclick="closeModal('modal-set-password')">Dopo</button>
+      <button class="primary" onclick="saveNewPassword()">Salva password</button>
     </div>
   </div>
 </div>
@@ -1284,7 +1506,12 @@ function showPage(name){
 
 function eur(v){if(v==null||isNaN(v))return'—';return v.toFixed(2).replace('.',',')+' €';}
 function pct(v){if(v==null||isNaN(v))return'';return(v>=0?'+':'')+v.toFixed(1)+'%';}
-function fmtDate(iso){if(!iso)return'—';return new Date(iso).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtDate(iso){
+  if(!iso)return'—';
+  const d=new Date(iso);
+  const mesi=['GEN','FEB','MAR','APR','MAG','GIU','LUG','AGO','SET','OTT','NOV','DIC'];
+  return d.getDate().toString().padStart(2,'0')+' '+mesi[d.getMonth()]+' '+d.getFullYear();
+}
 function currentMarket(c){if(!c.history?.length)return null;return c.history[c.history.length-1].value;}
 function totalMarket(c){return currentMarket(c);}
 function totalBuyPrice(c){return c.buyPrice||0;}
@@ -2340,6 +2567,98 @@ function loadSold() {
   } catch(e) { state.sold = []; }
 }
 
+
+// ── Timeline vendite ──
+const MESI_BREVI = ['GEN','FEB','MAR','APR','MAG','GIU','LUG','AGO','SET','OTT','NOV','DIC'];
+const MESI_COMPLETI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const GIORNI_BREVI = ['DOM','LUN','MAR','MER','GIO','VEN','SAB'];
+
+let tlYear = new Date().getFullYear();
+let tlMonth = new Date().getMonth(); // 0-based
+
+function tlPrevMonth(){
+  tlMonth--;
+  if(tlMonth < 0){ tlMonth = 11; tlYear--; }
+  renderTimeline(state.sold||[]);
+}
+function tlNextMonth(){
+  tlMonth++;
+  if(tlMonth > 11){ tlMonth = 0; tlYear++; }
+  renderTimeline(state.sold||[]);
+}
+
+function renderTimeline(sold) {
+  const wrap = document.getElementById('sold-timeline');
+  const label = document.getElementById('tl-month-label');
+  if(!wrap) return;
+
+  // Update label
+  if(label) label.textContent = MESI_COMPLETI[tlMonth] + ' ' + tlYear;
+
+  // Days in month
+  const daysInMonth = new Date(tlYear, tlMonth + 1, 0).getDate();
+
+  // Group sold cards by date for this month
+  const byDay = {};
+  (sold||[]).forEach(c => {
+    const d = c.soldDate || c.soldAt?.slice(0,10);
+    if(!d) return;
+    const dt = new Date(d);
+    if(dt.getFullYear() === tlYear && dt.getMonth() === tlMonth) {
+      const day = dt.getDate();
+      if(!byDay[day]) byDay[day] = [];
+      byDay[day].push(c);
+    }
+  });
+
+  // Build timeline
+  const DAY_W = 80; // px per day
+  let html = '';
+  for(let d = 1; d <= daysInMonth; d++) {
+    const dt = new Date(tlYear, tlMonth, d);
+    const cards = byDay[d] || [];
+    const isToday = dt.toDateString() === new Date().toDateString();
+    const hasSales = cards.length > 0;
+
+    // Cards thumbnails above the bar
+    const thumbs = cards.map(c => {
+      const profit = (c.soldPrice||0) - (c.buyPrice||0);
+      const cls = profit >= 0 ? 'pos' : 'neg';
+      return `<div class="tl-thumb" title="${c.name}&#10;Acquisto: ${eur(c.buyPrice||0)}&#10;Venduto: ${eur(c.soldPrice||0)}&#10;Profitto: ${profit>=0?'+':''}${eur(profit)}">
+        ${c.image
+          ? `<img src="${c.image}" alt="" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+          : ''
+        }
+        <div class="tl-thumb-ph" style="${c.image?'display:none;':''}">✦</div>
+        <div class="tl-thumb-profit ${cls}">${profit>=0?'+':''}${Math.round(profit)}€</div>
+      </div>`;
+    }).join('');
+
+    html += `<div class="tl-col${isToday?' tl-today':''}${hasSales?' tl-has-sales':''}">
+      <div class="tl-thumbs">${thumbs}</div>
+      <div class="tl-bar-seg${hasSales?' tl-bar-active':''}"></div>
+      <div class="tl-day-num">${d}</div>
+      <div class="tl-day-name">${d===1||d===15?MESI_BREVI[tlMonth]:''}</div>
+    </div>`;
+  }
+
+  wrap.innerHTML = html;
+
+  // Drag to scroll
+  let isDragging = false, startX = 0, scrollLeft = 0;
+  wrap.addEventListener('mousedown', e => { isDragging=true; startX=e.pageX-wrap.offsetLeft; scrollLeft=wrap.scrollLeft; wrap.style.cursor='grabbing'; });
+  wrap.addEventListener('mouseleave', () => { isDragging=false; wrap.style.cursor='grab'; });
+  wrap.addEventListener('mouseup', () => { isDragging=false; wrap.style.cursor='grab'; });
+  wrap.addEventListener('mousemove', e => { if(!isDragging) return; e.preventDefault(); const x=e.pageX-wrap.offsetLeft; wrap.scrollLeft=scrollLeft-(x-startX); });
+
+  // Scroll to today if current month
+  if(tlMonth === new Date().getMonth() && tlYear === new Date().getFullYear()){
+    const today = new Date().getDate();
+    setTimeout(() => { wrap.scrollLeft = Math.max(0, (today - 4) * DAY_W); }, 50);
+  }
+}
+
+
 function renderSortBarSold(){
   const bar = document.getElementById('sort-bar-sold');
   if(!bar) return;
@@ -2383,6 +2702,7 @@ function sortSold(cards){
 
 function renderSold() {
   renderSortBarSold();
+  renderTimeline(state.sold || []); // timeline always shows all, unfiltered
   const filter = (document.getElementById('filter-sold')?.value || '').toLowerCase();
   const filtered = (state.sold || []).filter(c =>
     !filter ||
@@ -2538,7 +2858,7 @@ function drawPortfolioChart(){
 
 // ── MODALS ──
 function closeModal(id){document.getElementById(id).classList.remove('show');}
-['modal-add','modal-detail','modal-update','modal-edit','modal-auth','modal-sell'].forEach(id=>{
+['modal-add','modal-detail','modal-update','modal-edit','modal-auth','modal-sell','modal-set-password'].forEach(id=>{
   document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)closeModal(id);});
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('modal-add');closeModal('modal-detail');closeModal('modal-update');closeModal('modal-edit');closeModal('modal-auth');closeModal('modal-sell');closeFS();}});
@@ -2560,7 +2880,14 @@ window.addEventListener('resize',()=>{
 // ══════════════════════════════
 const SB_URL = 'https://nkaspcyaoyogbilqmdis.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rYXNwY3lhb3lvZ2JpbHFtZGlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MjM5NTAsImV4cCI6MjA5MjI5OTk1MH0.Wp-xnCS5XRy9opKHvzhpSEcdTxpod6ptz08e8lE2-Hk';
-const sb = supabase.createClient(SB_URL, SB_KEY);
+const sb = supabase.createClient(SB_URL, SB_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+  }
+});
 
 let currentUser = null;
 let syncTimer = null;
@@ -2570,6 +2897,11 @@ async function initAuth() {
   // Supabase v2 gestisce automaticamente il token dall'URL (hash o query string)
   // onAuthStateChange cattura SIGNED_IN anche al primo caricamento post-magic-link
   sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      // User clicked reset password link - show set password modal
+      document.getElementById('modal-set-password').classList.add('show');
+      return;
+    }
     if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
       currentUser = session.user;
       await pullFromSupabase();
@@ -2609,6 +2941,9 @@ function updateAuthUI() {
       btn.textContent = 'Esci';
       btn.onclick = () => sb.auth.signOut();
       info.textContent = currentUser.email;
+      // Show change password option
+      const changePwBtn = document.getElementById('change-pw-btn');
+      if(changePwBtn) changePwBtn.style.display = 'block';
     } else {
       btn.textContent = 'Accedi';
       btn.onclick = openAuthModal;
@@ -2637,43 +2972,140 @@ async function openAuthModal() {
   setTimeout(() => document.getElementById('auth-email').focus(), 60);
 }
 
+let authMode = 'login';
+
+function switchAuthTab(mode) {
+  authMode = mode;
+  const isLogin = mode === 'login';
+  document.getElementById('tab-login').style.borderBottomColor = isLogin ? 'var(--gold2)' : 'transparent';
+  document.getElementById('tab-login').style.color = isLogin ? 'var(--gold2)' : 'var(--muted)';
+  document.getElementById('tab-register').style.borderBottomColor = !isLogin ? 'var(--gold2)' : 'transparent';
+  document.getElementById('tab-register').style.color = !isLogin ? 'var(--gold2)' : 'var(--muted)';
+  document.getElementById('auth-submit-btn').textContent = isLogin ? 'Accedi' : 'Registrati';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+async function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const errEl = document.getElementById('auth-error');
+  const btn = document.getElementById('auth-submit-btn');
+  
+  if (!email || !password) { errEl.textContent = 'Inserisci email e password'; errEl.style.display='block'; return; }
+  if (password.length < 6) { errEl.textContent = 'Password minimo 6 caratteri'; errEl.style.display='block'; return; }
+  
+  btn.disabled = true;
+  btn.textContent = '...';
+  errEl.style.display = 'none';
+  
+  try {
+    let result;
+    if (authMode === 'login') {
+      result = await sb.auth.signInWithPassword({ email, password });
+    } else {
+      result = await sb.auth.signUp({ email, password });
+    }
+    
+    if (result.error) {
+      errEl.textContent = result.error.message;
+      errEl.style.display = 'block';
+    } else if (authMode === 'register' && !result.data.session) {
+      errEl.style.color = 'var(--green)';
+      errEl.textContent = '✓ Registrato! Controlla email per confermare.';
+      errEl.style.display = 'block';
+    } else {
+      closeModal('modal-auth');
+    }
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  }
+  
+  btn.disabled = false;
+  btn.textContent = authMode === 'login' ? 'Accedi' : 'Registrati';
+}
+
 async function sendMagicLink() {
   const email = document.getElementById('auth-email').value.trim();
-  if (!email) { showToast('Inserisci email', true); return; }
-  const btn = document.getElementById('auth-send-btn');
-  btn.disabled = true; btn.textContent = 'Invio...';
+  if (!email) { showToast('Inserisci email prima', true); return; }
   const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
-  if (error) {
-    showToast('Errore: ' + error.message, true);
-    btn.disabled = false; btn.textContent = 'Invia link';
-  } else {
-    document.getElementById('auth-step1').style.display = 'none';
-    document.getElementById('auth-step2').style.display = 'block';
-  }
+  if (error) showToast('Errore: ' + error.message, true);
+  else showToast('Link inviato — controlla email');
 }
 
 // ── SYNC ──
 async function pushToSupabase() {
-  if (!currentUser) return;
+  if (!currentUser) {
+    // Not logged in - show warning in sidebar
+    const info = document.getElementById('auth-info');
+    if(info) info.style.color = 'var(--red)';
+    return;
+  }
+  setSyncStatus('syncing');
   try {
-    await sb.from('portfolio').upsert({
+    const { error } = await sb.from('portfolio').upsert({
       user_id: currentUser.id,
       cards: state.cards,
       sold: state.sold || [],
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_id' });
-  } catch(e) { console.error('Sync error', e); }
+    if(error) throw error;
+    setSyncStatus('ok');
+  } catch(e) {
+    console.error('Sync error', e);
+    setSyncStatus('error');
+  }
+}
+
+
+async function saveNewPassword() {
+  const pw = document.getElementById('new-password').value;
+  const pw2 = document.getElementById('confirm-password').value;
+  const errEl = document.getElementById('set-pw-error');
+  if (pw.length < 6) { errEl.textContent = 'Minimo 6 caratteri'; errEl.style.display='block'; return; }
+  if (pw !== pw2) { errEl.textContent = 'Le password non coincidono'; errEl.style.display='block'; return; }
+  const { error } = await sb.auth.updateUser({ password: pw });
+  if (error) { errEl.textContent = error.message; errEl.style.display='block'; return; }
+  closeModal('modal-set-password');
+  showToast('Password salvata ✓ — ora puoi accedere con email e password');
+}
+
+function setSyncStatus(status) {
+  const el = document.getElementById('sync-status');
+  if(!el) return;
+  if(status === 'syncing') {
+    el.textContent = '⟳ Salvataggio...';
+    el.style.color = 'var(--muted)';
+  } else if(status === 'ok') {
+    el.textContent = '✓ Salvato';
+    el.style.color = 'var(--green)';
+    setTimeout(() => { if(el) el.textContent = ''; }, 3000);
+  } else if(status === 'error') {
+    el.textContent = '✗ Errore sync';
+    el.style.color = 'var(--red)';
+  }
 }
 
 async function pullFromSupabase() {
   if (!currentUser) return;
   try {
     const { data, error } = await sb.from('portfolio').select('cards,sold').eq('user_id', currentUser.id).single();
-    if (!error && data) {
-      if (data.cards) { state.cards = data.cards; localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards)); }
-      if (data.sold) { state.sold = data.sold; localStorage.setItem(STORAGE_KEY+'_sold', JSON.stringify(state.sold)); }
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+    if (data) {
+      if (data.cards && data.cards.length > 0) {
+        state.cards = data.cards;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards));
+      }
+      if (data.sold && data.sold.length > 0) {
+        state.sold = data.sold;
+        localStorage.setItem(STORAGE_KEY+'_sold', JSON.stringify(state.sold));
+      }
     }
-  } catch(e) { console.error('Pull error', e); }
+    setSyncStatus('ok');
+  } catch(e) {
+    console.error('Pull error', e);
+    setSyncStatus('error');
+  }
 }
 
 // save() already includes sync — see function definition above

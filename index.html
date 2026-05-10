@@ -3035,12 +3035,23 @@ async function sendMagicLink() {
 
 // ── SYNC ──
 async function pushToSupabase() {
-  if (!currentUser) {
-    // Not logged in - show warning in sidebar
-    const info = document.getElementById('auth-info');
-    if(info) info.style.color = 'var(--red)';
-    return;
+  // Refresh sessione prima di scrivere
+  const { data: { session }, error: sessionError } = await sb.auth.getSession();
+  if (sessionError || !session) {
+    // Tenta refresh token
+    const { data: refreshData, error: refreshError } = await sb.auth.refreshSession();
+    if (refreshError || !refreshData.session) {
+      setSyncStatus('error');
+      showToast('⚠ Sessione scaduta — effettua di nuovo il login');
+      currentUser = null;
+      updateAuthUI();
+      return;
+    }
+    currentUser = refreshData.session.user;
+  } else {
+    currentUser = session.user;
   }
+
   setSyncStatus('syncing');
   try {
     const { error } = await sb.from('portfolio').upsert({
@@ -3054,6 +3065,7 @@ async function pushToSupabase() {
   } catch(e) {
     console.error('Sync error', e);
     setSyncStatus('error');
+    showToast('✗ Errore salvataggio — riprova');
   }
 }
 
@@ -3132,23 +3144,7 @@ function injectManifest() {
 
 // ── SERVICE WORKER ──
 function registerSW() {
-  if (!('serviceWorker' in navigator)) return;
-  const swCode = `
-    const CACHE = 'pokedex-v1';
-    self.addEventListener('install', e => {
-      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => { self.clients.claim(); });
-    self.addEventListener('fetch', e => {
-      if (e.request.method !== 'GET') return;
-      e.respondWith(
-        fetch(e.request).catch(() => caches.match(e.request))
-      );
-    });
-  `;
-  const blob = new Blob([swCode], {type:'application/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(blob));
+  // Disabilitato: blob URL non supportato su Vercel/HTTPS
 }
 
 // ── INIT ──

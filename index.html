@@ -3149,19 +3149,26 @@ async function pushToSupabase() {
   }
   setSyncStatus('syncing');
   try {
-    const res = await fetch(SB_URL + '/rest/v1/portfolio', {
-      method: 'POST',
-      headers: {
-        ...sbHeaders(token),
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
-      body: JSON.stringify({
-        user_id: currentUser.id,
-        cards: state.cards,
-        sold: state.sold || [],
-        updated_at: new Date().toISOString()
-      })
+    const body = JSON.stringify({
+      user_id: currentUser.id,
+      cards: state.cards,
+      sold: state.sold || [],
+      updated_at: new Date().toISOString()
     });
+    // Prova PATCH (update), se non esiste usa POST (insert)
+    let res = await fetch(SB_URL + '/rest/v1/portfolio?user_id=eq.' + currentUser.id, {
+      method: 'PATCH',
+      headers: { ...sbHeaders(token), 'Prefer': 'return=minimal' },
+      body
+    });
+    if (!res.ok) {
+      // Fallback: POST insert
+      res = await fetch(SB_URL + '/rest/v1/portfolio', {
+        method: 'POST',
+        headers: { ...sbHeaders(token), 'Prefer': 'return=minimal' },
+        body
+      });
+    }
     if (!res.ok) throw new Error(await res.text());
     setSyncStatus('ok');
   } catch(e) {

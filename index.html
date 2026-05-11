@@ -3014,7 +3014,12 @@ async function submitAuth() {
       errEl.textContent = '✓ Registrato! Controlla email per confermare.';
       errEl.style.display = 'block';
     } else {
+      currentUser = result.data.user;
       closeModal('modal-auth');
+      showToast('Accesso effettuato ✓');
+      await pullFromSupabase();
+      renderAll();
+      updateAuthUI();
     }
   } catch(e) {
     errEl.textContent = e.message;

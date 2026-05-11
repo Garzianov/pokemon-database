@@ -2999,27 +2999,53 @@ async function submitAuth() {
   errEl.style.display = 'none';
   
   try {
-    let result;
+    let data, error;
     if (authMode === 'login') {
-      result = await sb.auth.signInWithPassword({ email, password });
+      // Usa fetch diretto per evitare bug con supabase-js GoTrueClient
+      const res = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY },
+        body: JSON.stringify({ email, password })
+      });
+      data = await res.json();
+      if (data.error || data.error_code) {
+        error = { message: data.error_description || data.message || 'Errore login' };
+      } else {
+        // Imposta sessione nel client supabase
+        await sb.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
+        currentUser = data.user;
+        closeModal('modal-auth');
+        showToast('Accesso effettuato ✓');
+        await pullFromSupabase();
+        renderAll();
+        updateAuthUI();
+      }
     } else {
-      result = await sb.auth.signUp({ email, password });
+      const res = await fetch(SB_URL + '/auth/v1/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY },
+        body: JSON.stringify({ email, password })
+      });
+      data = await res.json();
+      if (data.error || data.error_code) {
+        error = { message: data.error_description || data.message || 'Errore registrazione' };
+      } else if (!data.session) {
+        errEl.style.color = 'var(--green)';
+        errEl.textContent = '✓ Registrato! Controlla email per confermare.';
+        errEl.style.display = 'block';
+      } else {
+        await sb.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
+        currentUser = data.user;
+        closeModal('modal-auth');
+        showToast('Accesso effettuato ✓');
+        await pullFromSupabase();
+        renderAll();
+        updateAuthUI();
+      }
     }
-    
-    if (result.error) {
-      errEl.textContent = result.error.message;
+    if (error) {
+      errEl.textContent = error.message;
       errEl.style.display = 'block';
-    } else if (authMode === 'register' && !result.data.session) {
-      errEl.style.color = 'var(--green)';
-      errEl.textContent = '✓ Registrato! Controlla email per confermare.';
-      errEl.style.display = 'block';
-    } else {
-      currentUser = result.data.user;
-      closeModal('modal-auth');
-      showToast('Accesso effettuato ✓');
-      await pullFromSupabase();
-      renderAll();
-      updateAuthUI();
     }
   } catch(e) {
     errEl.textContent = e.message;

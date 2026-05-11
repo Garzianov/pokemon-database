@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#0a0a0c">
 <title>Pokédex Portafoglio</title>
 <link rel="manifest" id="pwa-manifest">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- supabase-js rimosso: uso fetch diretto -->
 <style>
 @font-face {
   font-family: 'CreatoDisplay';
@@ -1068,7 +1068,7 @@ canvas{display:block;width:100%;}
   <button class="bn-item" id="bn-sold" onclick="showPage('sold')">
     <span class="bn-icon">✦</span><span>Venduti</span>
   </button>
-  <button class="bn-item" id="bn-auth" onclick="currentUser?sb.auth.signOut():openAuthModal()">
+  <button class="bn-item" id="bn-auth" onclick="currentUser?doSignOut():openAuthModal()">
     <span class="bn-icon" id="bn-auth-icon">⊙</span>
     <span id="bn-auth-label">Accedi</span>
   </button>
@@ -2876,61 +2876,133 @@ window.addEventListener('resize',()=>{
 });
 
 // ══════════════════════════════
-//  SUPABASE + AUTH + SYNC
+//  SUPABASE + AUTH + SYNC (fetch diretto, no libreria)
 // ══════════════════════════════
 const SB_URL = 'https://nkaspcyaoyogbilqmdis.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rYXNwY3lhb3lvZ2JpbHFtZGlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MjM5NTAsImV4cCI6MjA5MjI5OTk1MH0.Wp-xnCS5XRy9opKHvzhpSEcdTxpod6ptz08e8lE2-Hk';
-const sb = supabase.createClient(SB_URL, SB_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    storage: window.localStorage,
-  }
-});
+const SB_SESSION_KEY = 'pkm_sb_session';
 
 let currentUser = null;
 let syncTimer = null;
 
+// ── SUPABASE FETCH HELPERS ──
+function sbHeaders(token) {
+  const h = { 'Content-Type': 'application/json', 'apikey': SB_KEY };
+  if (token) h['Authorization'] = 'Bearer ' + token;
+  return h;
+}
+
+function getStoredSession() {
+  try { return JSON.parse(localStorage.getItem(SB_SESSION_KEY)); } catch { return null; }
+}
+
+function storeSession(session) {
+  if (session) localStorage.setItem(SB_SESSION_KEY, JSON.stringify(session));
+  else localStorage.removeItem(SB_SESSION_KEY);
+}
+
+async function sbRefreshToken(refresh_token) {
+  const res = await fetch(SB_URL + '/auth/v1/token?grant_type=refresh_token', {
+    method: 'POST',
+    headers: sbHeaders(),
+    body: JSON.stringify({ refresh_token })
+  });
+  const data = await res.json();
+  if (data.access_token) { storeSession(data); return data; }
+  return null;
+}
+
+async function getValidToken() {
+  let session = getStoredSession();
+  if (!session) return null;
+  // Controlla scadenza (exp - 60s di margine)
+  try {
+    const payload = JSON.parse(atob(session.access_token.split('.')[1]));
+    if (payload.exp * 1000 < Date.now() + 60000) {
+      // Token scaduto, refresh
+      session = await sbRefreshToken(session.refresh_token);
+      if (!session) { storeSession(null); currentUser = null; return null; }
+    }
+  } catch { return null; }
+  return session.access_token;
+}
+
+async function sbFrom(table) {
+  const token = await getValidToken();
+  return {
+    async upsert(data, opts) {
+      const res = await fetch(SB_URL + '/rest/v1/' + table, {
+        method: 'POST',
+        headers: { ...sbHeaders(token), 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) { const e = await res.json(); return { error: e }; }
+      return { error: null };
+    },
+    eq(col, val) {
+      this._eq = `${col}=eq.${val}`;
+      return this;
+    },
+    async select(cols) {
+      const res = await fetch(SB_URL + '/rest/v1/' + table + '?select=' + cols + (this._eq ? '&' + this._eq : '') + '&limit=1', {
+        headers: { ...sbHeaders(token), 'Accept': 'application/json' }
+      });
+      if (!res.ok) { const e = await res.json(); return { data: null, error: e }; }
+      const rows = await res.json();
+      return { data: rows[0] || null, error: null };
+    },
+    single() { return this; }
+  };
+}
+
 // ── AUTH ──
 async function initAuth() {
-  // Supabase v2 gestisce automaticamente il token dall'URL (hash o query string)
-  // onAuthStateChange cattura SIGNED_IN anche al primo caricamento post-magic-link
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'PASSWORD_RECOVERY') {
-      // User clicked reset password link - show set password modal
-      document.getElementById('modal-set-password').classList.add('show');
-      return;
+  // Gestione magic link / recovery dall'URL hash
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token')) {
+    const params = new URLSearchParams(hash.substring(1));
+    const access_token = params.get('access_token');
+    const refresh_token = params.get('refresh_token');
+    const type = params.get('type');
+    if (access_token && refresh_token) {
+      // Ottieni user info
+      const res = await fetch(SB_URL + '/auth/v1/user', {
+        headers: sbHeaders(access_token)
+      });
+      const userData = await res.json();
+      if (userData.id) {
+        storeSession({ access_token, refresh_token, user: userData });
+        currentUser = userData;
+        if (type === 'recovery') {
+          document.getElementById('modal-set-password').classList.add('show');
+        } else {
+          showToast('Accesso effettuato ✓');
+        }
+        window.history.replaceState(null, '', window.location.pathname);
+        await pullFromSupabase();
+      }
     }
-    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+  } else {
+    // Controlla sessione salvata
+    const token = await getValidToken();
+    if (token) {
+      const session = getStoredSession();
       currentUser = session.user;
       await pullFromSupabase();
-      renderAll();
-      updateAuthUI();
-      if (event === 'SIGNED_IN') {
-        showToast('Accesso effettuato ✓');
-        closeModal('modal-auth');
-      }
-      // Pulisci URL
-      if (window.location.hash || window.location.search.includes('code=')) {
-        window.history.replaceState(null, '', window.location.pathname);
-      }
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null;
-      renderAll();
-      updateAuthUI();
-      showToast('Disconnesso');
     }
-  });
-
-  // Controlla sessione esistente
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    await pullFromSupabase();
   }
   renderAll();
   updateAuthUI();
+}
+
+async function doSignOut() {
+  const token = await getValidToken();
+  if (token) await fetch(SB_URL + '/auth/v1/logout', { method: 'POST', headers: sbHeaders(token) });
+  storeSession(null);
+  currentUser = null;
+  renderAll();
+  updateAuthUI();
+  showToast('Disconnesso');
 }
 
 function updateAuthUI() {
@@ -2939,7 +3011,7 @@ function updateAuthUI() {
   if (btn) {
     if (currentUser) {
       btn.textContent = 'Esci';
-      btn.onclick = () => sb.auth.signOut();
+      btn.onclick = doSignOut;
       info.textContent = currentUser.email;
       // Show change password option
       const changePwBtn = document.getElementById('change-pw-btn');
@@ -3012,7 +3084,7 @@ async function submitAuth() {
         error = { message: data.error_description || data.message || 'Errore login' };
       } else {
         // Imposta sessione nel client supabase
-        await sb.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
+        storeSession(data);
         currentUser = data.user;
         closeModal('modal-auth');
         showToast('Accesso effettuato ✓');
@@ -3034,7 +3106,7 @@ async function submitAuth() {
         errEl.textContent = '✓ Registrato! Controlla email per confermare.';
         errEl.style.display = 'block';
       } else {
-        await sb.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
+        storeSession(data);
         currentUser = data.user;
         closeModal('modal-auth');
         showToast('Accesso effettuato ✓');
@@ -3059,44 +3131,42 @@ async function submitAuth() {
 async function sendMagicLink() {
   const email = document.getElementById('auth-email').value.trim();
   if (!email) { showToast('Inserisci email prima', true); return; }
-  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
-  if (error) showToast('Errore: ' + error.message, true);
-  else showToast('Link inviato — controlla email');
+  const res = await fetch(SB_URL + '/auth/v1/otp', {
+    method: 'POST',
+    headers: sbHeaders(),
+    body: JSON.stringify({ email, options: { emailRedirectTo: window.location.href } })
+  });
+  if (res.ok) showToast('Link inviato — controlla email');
+  else { const e = await res.json(); showToast('Errore: ' + (e.error_description || e.message), true); }
 }
 
 // ── SYNC ──
 async function pushToSupabase() {
-  // Refresh sessione prima di scrivere
-  const { data: { session }, error: sessionError } = await sb.auth.getSession();
-  if (sessionError || !session) {
-    // Tenta refresh token
-    const { data: refreshData, error: refreshError } = await sb.auth.refreshSession();
-    if (refreshError || !refreshData.session) {
-      setSyncStatus('error');
-      showToast('⚠ Sessione scaduta — effettua di nuovo il login');
-      currentUser = null;
-      updateAuthUI();
-      return;
-    }
-    currentUser = refreshData.session.user;
-  } else {
-    currentUser = session.user;
+  const token = await getValidToken();
+  if (!token || !currentUser) {
+    setSyncStatus('error');
+    return;
   }
-
   setSyncStatus('syncing');
   try {
-    const { error } = await sb.from('portfolio').upsert({
-      user_id: currentUser.id,
-      cards: state.cards,
-      sold: state.sold || [],
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' });
-    if(error) throw error;
+    const res = await fetch(SB_URL + '/rest/v1/portfolio', {
+      method: 'POST',
+      headers: {
+        ...sbHeaders(token),
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({
+        user_id: currentUser.id,
+        cards: state.cards,
+        sold: state.sold || [],
+        updated_at: new Date().toISOString()
+      })
+    });
+    if (!res.ok) throw new Error(await res.text());
     setSyncStatus('ok');
   } catch(e) {
     console.error('Sync error', e);
     setSyncStatus('error');
-    showToast('✗ Errore salvataggio — riprova');
   }
 }
 
@@ -3107,8 +3177,14 @@ async function saveNewPassword() {
   const errEl = document.getElementById('set-pw-error');
   if (pw.length < 6) { errEl.textContent = 'Minimo 6 caratteri'; errEl.style.display='block'; return; }
   if (pw !== pw2) { errEl.textContent = 'Le password non coincidono'; errEl.style.display='block'; return; }
-  const { error } = await sb.auth.updateUser({ password: pw });
-  if (error) { errEl.textContent = error.message; errEl.style.display='block'; return; }
+  const token = await getValidToken();
+  if (!token) { errEl.textContent = 'Sessione scaduta — rieffettua il login'; errEl.style.display='block'; return; }
+  const res = await fetch(SB_URL + '/auth/v1/user', {
+    method: 'PUT',
+    headers: sbHeaders(token),
+    body: JSON.stringify({ password: pw })
+  });
+  if (!res.ok) { const e = await res.json(); errEl.textContent = e.message || 'Errore'; errEl.style.display='block'; return; }
   closeModal('modal-set-password');
   showToast('Password salvata ✓ — ora puoi accedere con email e password');
 }
@@ -3132,8 +3208,13 @@ function setSyncStatus(status) {
 async function pullFromSupabase() {
   if (!currentUser) return;
   try {
-    const { data, error } = await sb.from('portfolio').select('cards,sold').eq('user_id', currentUser.id).single();
-    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+    const token = await getValidToken();
+    if (!token) return;
+    const res = await fetch(SB_URL + '/rest/v1/portfolio?select=cards,sold&user_id=eq.' + currentUser.id + '&limit=1', {
+      headers: { ...sbHeaders(token), 'Accept': 'application/json' }
+    });
+    const rows = await res.json();
+    const data = rows[0] || null;
     if (data) {
       if (data.cards && data.cards.length > 0) {
         state.cards = data.cards;
